@@ -5,8 +5,7 @@ import glob
 
 
 ret_val=0
-print("Verifying recorded md5sum for containers")
-print("and making sure that recipies are present")
+print("Verifying recorded md5sum for containers and making sure that recipies are present")
 with open("data.json") as f:
     data = json.load(f)
     for c in data["containers"]:
@@ -23,4 +22,12 @@ with open("data.json") as f:
             print(f"Container {c['name']} md5sum missmatch. Please sync repository and container")
             print(f"ALSO VERIFY THAT RECIPIE IS CORRECT")
             ret_val=1
+    print("Verifying that no extra containers are present")
+    x =  requests.get(f"{data['source_url']}")
+    present = [c['name'] for c in data["containers"]]
+    for obj in x.content.decode("utf-8").split('\n'):
+        if obj not in present:
+            print("Container {c['name']} is not reported in the repository")
+            ret_val=1
 sys.exit(ret_val)
+

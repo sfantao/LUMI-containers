@@ -3,6 +3,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: '37 4 * * *'
 
 jobs:
    verify-containers:
