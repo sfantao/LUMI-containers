@@ -9,8 +9,12 @@ So the can not be directly used in `.def` files but can be used with `singularit
 
 - `PARAVIEW_LUMI.sif`
   - RPM Based paraview installation with virtualGL
-  - sha256 `35e28350d74294dbf0e9cf517f511e6ea96dbcf3b87522a1125eca679af40580`
 - `VGL_LUMI.sif`
   - Base VGL container with VNC   	
 - `VNC_LUMI.sif`
   - Base VNC container 
+
+## Adding containers
+
+- Follow the naming scheme. <container_name>.def -> <container_name>.sif
+- Update the info in `data.json` when making changes

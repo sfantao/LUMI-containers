@@ -3,7 +3,7 @@ From: VNC_LUMI.sif
 
 %post
     cd /
-    wget https://sourceforge.net/projects/virtualgl/files/3.0/VirtualGL-3.0.x86_64.rpm/download
+    wget -O VirtualGL-3.0.x86_64.rpm https://sourceforge.net/projects/virtualgl/files/3.0/VirtualGL-3.0.x86_64.rpm/download
     zypper -n install libXv1
     zypper -n install Mesa-libGL1
     zypper -n install Mesa-libEGL1 libGLU1

@@ -1,0 +1,21 @@
+{
+"source_url": "https://a3s.fi/swift/v1/AUTH_ac5838fe86f043458516efa4b8235d7a/lumi-containers",
+"containers": [
+    {
+        "md5sum": "81fcf3f68abd7f6bbf79458cf448cca2",
+        "name": "VNC_LUMI.sif",
+        "description": "Base VNC container"
+    },
+    {
+        "md5sum": "5dead26d6c26bf0528b464cd9663d5b3",
+        "name": "PARAVIEW_LUMI.sif",
+        "description": "RPM Based paraview installation with VGL"
+    },
+    {
+        "md5sum": "e99a0f25932d2fba46010f0022ba3919",
+        "name": "VGL_LUMI.sif",
+        "description": "Base VGL container"
+    }
+] 
+
+}

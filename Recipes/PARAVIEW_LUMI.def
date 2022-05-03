@@ -1,0 +1,5 @@
+Bootstrap: localimage
+From: VGL_LUMI.sif 
+
+%post 
+    zypper -n install paraview
