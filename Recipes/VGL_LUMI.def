@@ -1,0 +1,16 @@
+Bootstrap: localimage
+From: VNC_LUMI.sif
+
+%post
+    wget https://sourceforge.net/projects/virtualgl/files/3.0/VirtualGL-3.0.x86_64.rpm/download
+    zypper -n install libXv1
+    zypper -n install Mesa-libGL1
+    zypper -n install Mesa-libEGL1 libGLU1
+    zypper -n install libglvnd libglvnd-devel
+    zypper -n install xorg-x11-xauth xterm libXtst6
+    zypper -n install xorg-x11-fonts
+    rpm -i /VirtualGL-3.0.x86_64.rpm
+    wget https://us.download.nvidia.com/tesla/510.47.03/NVIDIA-Linux-x86_64-510.47.03.run
+    sh NVIDIA-Linux-x86_64-510.47.03.run -a -N --ui=none --no-kernel-module --no-x-check
+    zypper -n install libturbojpeg0
+    vglserver_config +s +f +t +glx
