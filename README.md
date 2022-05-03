@@ -17,5 +17,7 @@ So the can not be directly used in `.def` files but can be used with `singularit
 
 ## Adding containers
 
+- Create a PR
 - Follow the naming scheme. <container_name>.def -> <container_name>.sif
 - Update the info in `data.json` when making changes
+- PR:s can not be merged if the tests don't work
