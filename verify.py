@@ -9,7 +9,7 @@ print("Verifying recorded md5sum for containers and making sure that recipies ar
 with open("data.json") as f:
     data = json.load(f)
     for c in data["containers"]:
-        if not c["name"].split('.')[:-2] in [ x.split('.')[:-2] for x in glob.glob("Recipes/*.def")]:
+        if not c["name"].split('.')[:-1] in [ x[8:].split('.')[:-1] for x in glob.glob("Recipes/*.def")]:
             print(f"No .def file found for container {c['name']}")
             ret_val=1
             continue
