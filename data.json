@@ -18,7 +18,7 @@
     },
     {
         "md5sum": "287dee508b59c52eaa3cc04f4a9f653f",
-        "name": "VISIT_LUMI.sif"
+        "name": "VISIT_LUMI.sif",
         "description": "VISIT with VGL ( centos based )"
     }
 ] 
