@@ -13,7 +13,9 @@ So the can not be directly used in `.def` files but can be used with `singularit
 - `VGL_LUMI.sif`
   - Base VGL container with VNC   	
 - `VNC_LUMI.sif`
-  - Base VNC container 
+  - Base VNC container
+- `VISIT_LUMI.sif`
+  - Visit installation with virtualGL (centos based) 
 
 ## Adding containers
 
