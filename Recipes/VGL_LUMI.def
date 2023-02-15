@@ -1,9 +1,10 @@
-Bootstrap: localimage
-From: VNC_LUMI.sif
+Bootstrap: oras
+From: ghcr.io/lumi-supercomputer/vnc:1.0
 
 %post
     VGL_VERSION=3.0.2
     NVIDIA_DRIVER_VERSION=515.65.01
+
     cd /
     wget -O VirtualGL-${VGL_VERSION}.x86_64.rpm https://sourceforge.net/projects/virtualgl/files/${VGL_VERSION}/VirtualGL-${VGL_VERSION}.x86_64.rpm/download
     zypper -n install libXv1
