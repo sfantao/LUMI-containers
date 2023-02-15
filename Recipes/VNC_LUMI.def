@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: opensuse/leap:15.2
+From: opensuse/leap:15.3
 
 %post 
     zypper -n install fluxbox
@@ -13,6 +13,7 @@ session.screen0.toolbar.tools:  prevworkspace, workspacename, nextworkspace, clo
 session.screen0.toolbar.autoHide:       false
 session.screen0.toolbar.visible:        false
 " > /usr/share/fluxbox/init 
+    sed -i 's/^OnDesktop Mouse3.*/#&/g' /usr/share/fluxbox/keys 
     zypper -n install xterm
     zypper -n install hostname
     zypper -n install which
