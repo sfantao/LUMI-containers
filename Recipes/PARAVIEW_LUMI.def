@@ -1,5 +1,11 @@
-Bootstrap: localimage
-From: VGL_LUMI.sif 
+Bootstrap: oras
+from: ghcr.io/lumi-supercomputer/vgl:1.0
 
-%post 
+%post
+    cp /usr/bin/true /usr/sbin/groupadd
+    cp /usr/bin/true /usr/sbin/useradd
     zypper -n install paraview
+%runscript
+    bus_id=$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader)
+    export VGL_DISPLAY="/dev/dri/$(basename $( ls -d /sys/bus/pci/devices/${bus_id: -12}/drm/card* ))"
+    vglrun paraview
