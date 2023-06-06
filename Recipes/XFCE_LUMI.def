@@ -1,0 +1,93 @@
+Bootstrap: docker
+From: opensuse/leap:15.4
+
+%post 
+    VGL_VERSION=3.0.2
+    cp /usr/bin/true /usr/sbin/groupadd
+    cp /usr/bin/true /usr/sbin/useradd
+    mkdir /BackgroundImages
+    zypper -n install wget
+    wget -O /BackgroundImages/lumi.jpg https://www.lumi-supercomputer.eu/content/uploads/2022/10/LUMI_supercomputer_2022_web.jpg
+    zypper -n install patterns-openSUSE-xfce
+    zypper -n install xterm
+    zypper -n install hostname
+    zypper -n install which
+    zypper -n install python3
+    zypper -n install python3-pip
+    pip3 install numpy
+    zypper -n install xkbcomp
+    zypper -n install xkbutils
+    zypper -n install xauth
+    zypper -n install wget
+    zypper -n install tar
+    zypper -n install xz
+    zypper -n install glibc-lang
+    zypper -n install firefox  
+    zypper -n install emacs
+    zypper -n install gedit
+
+    cd /
+    wget -O VirtualGL-${VGL_VERSION}.x86_64.rpm https://sourceforge.net/projects/virtualgl/files/${VGL_VERSION}/VirtualGL-${VGL_VERSION}.x86_64.rpm/download
+    zypper -n install libXv1
+    zypper -n install Mesa-libGL1
+    zypper -n install Mesa-libEGL1 libGLU1
+    zypper -n install libglvnd libglvnd-devel
+    zypper -n install xorg-x11-xauth xterm libXtst6
+    zypper -n install xorg-x11-fonts
+    zypper -n install kmod
+    rpm -i /VirtualGL-${VGL_VERSION}.x86_64.rpm
+    zypper -n install xfce4-terminal
+    zypper -n install xdg-user-dirs
+    chmod -R o+rX /etc/
+    echo '<?xml version="1.0" encoding="UTF-8"?>
+<channel name="xfce4-desktop" version="1.0">
+  <property name="desktop-menu" type="empty">
+    <property name="show" type="empty"/>
+  </property>
+  <property name="windowlist-menu" type="empty">
+    <property name="show" type="empty"/>
+  </property>
+  <property name="backdrop" type="empty">
+    <property name="screen0" type="empty">
+      <property name="monitorVNC-0" type="empty">
+        <property name="workspace0" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/BackgroundImages/lumi.jpg"/>
+        </property>
+        <property name="workspace1" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/BackgroundImages/lumi.jpg"/>
+        </property>
+        <property name="workspace2" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/BackgroundImages/lumi.jpg"/>
+        </property>
+        <property name="workspace3" type="empty">
+          <property name="color-style" type="int" value="0"/>
+          <property name="image-style" type="int" value="5"/>
+          <property name="last-image" type="string" value="/BackgroundImages/lumi.jpg"/>
+        </property>
+      </property>
+    </property>
+  </property>
+  <property name="last" type="empty">
+    <property name="window-width" type="int" value="641"/>
+    <property name="window-height" type="int" value="556"/>
+  </property>
+</channel>
+' > /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
+   echo -e '#!/bin/bash\n
+if [[ -z "$@" ]];then
+    srun --jobid=$SLURM_JOB_ID --overlap --pty bash -l
+else
+    srun --jobid=$SLURM_JOB_ID --overlap --pty bash -lc "$@"
+fi
+' > /usr/bin/host_terminal
+    chmod +x /usr/bin/host_terminal
+    cp /usr/bin/xterm /usr/bin/real-xterm
+    cp /usr/bin/xfce4-terminal /usr/bin/real-xfce4-terminal
+    echo -e '#!/bin/bash\n/usr/bin/real-xterm -e "bash /usr/bin/host_terminal"' > /usr/bin/xterm
+    echo -e '#!/bin/bash\n/usr/bin/real-xfce4-terminal -e "/usr/bin/host_terminal \"$(echo $@ | sed 's/-x//g' )\""' > /usr/bin/xfce4-terminal
