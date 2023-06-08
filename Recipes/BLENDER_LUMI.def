@@ -1,0 +1,14 @@
+Bootstrap: oras
+from: ghcr.io/lumi-supercomputer/vgl:1.0
+
+%post
+    BLENDER_VERSION=3.5.1
+    
+    wget https://ftp.halifax.rwth-aachen.de/blender/release/Blender$(cut -d . -f1-2 <<< $BLENDER_VERSION)/blender-$BLENDER_VERSION-linux-x64.tar.xz
+    tar xf blender-$BLENDER_VERSION-linux-x64.tar.xz
+    mv blender-$BLENDER_VERSION-linux-x64 /opt/blender
+    rm blender-$BLENDER_VERSION-linux-x64.tar.xz
+%runscript
+    bus_id=$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader)
+    export VGL_DISPLAY="/dev/dri/$(basename $( ls -d /sys/bus/pci/devices/${bus_id: -12}/drm/card* ))"
+    vglrun /opt/blender/blender
