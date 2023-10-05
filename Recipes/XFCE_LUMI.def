@@ -1,13 +1,18 @@
 Bootstrap: docker
 From: opensuse/leap:15.4
 
+
 %post 
     VGL_VERSION=3.0.2
     cp /usr/bin/true /usr/sbin/groupadd
     cp /usr/bin/true /usr/sbin/useradd
     mkdir /BackgroundImages
+    zypper -n install mpv
+    zypper -n install libreoffice
     zypper -n install wget
-    wget -O /BackgroundImages/lumi.jpg https://www.lumi-supercomputer.eu/content/uploads/2022/10/LUMI_supercomputer_2022_web.jpg
+    zypper -n install xreader
+    zypper -n install eog
+    wget -O /BackgroundImages/lumi.jpg https://a3s.fi/swift/v1/AUTH_53f5b0ae8e724b439a4cd16d1237015f/2001659-MT-Nortamo/lumi-editoitu-1.png
     zypper -n install patterns-openSUSE-xfce
     zypper -n install xterm
     zypper -n install hostname
@@ -23,7 +28,6 @@ From: opensuse/leap:15.4
     zypper -n install xz
     zypper -n install glibc-lang
     zypper -n install firefox  
-    zypper -n install emacs
     zypper -n install gedit
 
     cd /
@@ -38,6 +42,9 @@ From: opensuse/leap:15.4
     rpm -i /VirtualGL-${VGL_VERSION}.x86_64.rpm
     zypper -n install xfce4-terminal
     zypper -n install xdg-user-dirs
+    zypper ar -cfp 90 'https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Leap_15.4' packman
+    zypper -n --no-gpg-checks refresh
+    zypper -n --no-gpg-checks dist-upgrade --from packman --allow-vendor-change
     chmod -R o+rX /etc/
     echo '<?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-desktop" version="1.0">
