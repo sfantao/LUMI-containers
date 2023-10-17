@@ -7,5 +7,20 @@ from: ghcr.io/lumi-supercomputer/vgl:1.0
     zypper -n install paraview
 %runscript
     bus_id=$(nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader)
-    export VGL_DISPLAY="/dev/dri/$(basename $( ls -d /sys/bus/pci/devices/${bus_id: -12}/drm/card* ))"
+    bus_id_lower=${bus_id,,}
+    if ls -d /sys/bus/pci/devices/${bus_id: -12}/drm/card* ; then
+        export VGL_DISPLAY="/dev/dri/$(basename $( ls -d /sys/bus/pci/devices/${bus_id: -12}/drm/card* ))"
+    elif ls -d /sys/bus/pci/devices/${bus_id_lower: -12}/drm/card* ;then 
+        export VGL_DISPLAY="/dev/dri/$(basename $( ls -d /sys/bus/pci/devices/${bus_id_lower: -12}/drm/card* ))"
+    else
+        echo "Internal error failed to find a GPU for VGL, here is some info"
+        echo "Some information:"
+        echo "HOST $(hostname)"
+        echo "NVIDIA SMI OUTPUT"
+        nvidia-smi
+        echo "Container recipe"
+        cat /.singularity.d/Singularity
+        echo "Press any key to exit"
+        read  -n 1 
+    fi
     vglrun paraview
