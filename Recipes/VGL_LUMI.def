@@ -2,20 +2,42 @@ Bootstrap: oras
 From: ghcr.io/lumi-supercomputer/vnc:1.0
 
 %post
-    VGL_VERSION=3.0.2
-    NVIDIA_DRIVER_VERSION=525.125.06
 
+    VGL_VERSION=3.1
+    NVIDIA_DRIVER_VERSION=525.125.06
     cd /
+
     wget -O VirtualGL-${VGL_VERSION}.x86_64.rpm https://sourceforge.net/projects/virtualgl/files/${VGL_VERSION}/VirtualGL-${VGL_VERSION}.x86_64.rpm/download
-    zypper -n install libXv1
-    zypper -n install Mesa-libGL1
-    zypper -n install Mesa-libEGL1 libGLU1
+    zypper -n install libXv1 libjson-c3 libturbojpeg0
+    zypper -n install Mesa-libGL1 Mesa-libEGL1 libGLU1
     zypper -n install libglvnd libglvnd-devel
-    zypper -n install xorg-x11-xauth xterm libXtst6
-    zypper -n install xorg-x11-fonts
+    zypper -n install xorg-x11-xauth xterm libXtst6 xorg-x11-fonts
     zypper -n install kmod
+
+    echo "#!/bin/bash
+    tee /dev/dri/card* 2>&1<<<0 | grep I | cut -d ':' -f2 | tr -d ' ' | head -n1
+    " > /usr/bin/getEglCard
+
+    echo '#!/bin/bash
+    echo "Internal error, failed to get GPU card for EGL"
+    echo "HOST: $(hostname)"
+    echo "NVIDIA SMI: $(nvidia-smi)"
+    echo "Container: $SINGULARITY_CONTAINER"
+    echo "JobId: $SLURM_JOB_ID"
+    echo -e "SLURM_STEP_GPUS:$SLURM_STEP_GPUS\nSLURM_GPUS_ON_NODE:$SLURM_GPUS_ON_NODE\nGPU_DEVICE_ORDINAL:$GPU_DEVICE_ORDINAL"
+    echo "================ /dev/dri/ Permissions ================"
+    ls -la /dev/dri/
+    echo "================ /dev/dri Device test ================="
+    tee /dev/dri/card* 2>&1<<<0
+    echo "================ Container recipe ====================="
+    cat /.singularity.d/Singularity
+    echo "======================================================="
+    ' > /usr/bin/eglDebugInfo
+
+
     rpm -i /VirtualGL-${VGL_VERSION}.x86_64.rpm
+
     wget https://us.download.nvidia.com/tesla/${NVIDIA_DRIVER_VERSION}/NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run
     sh NVIDIA-Linux-x86_64-${NVIDIA_DRIVER_VERSION}.run -a -N --ui=none --no-kernel-module --no-x-check
-    zypper -n install libturbojpeg0
+
     vglserver_config +s +f +t +glx
