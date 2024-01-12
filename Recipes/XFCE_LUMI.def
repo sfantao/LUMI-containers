@@ -27,6 +27,7 @@ From: opensuse/leap:15.4
     zypper -n install tar
     zypper -n install xz
     zypper -n install glibc-lang
+    zypper -n install glibc-locale
     zypper -n install firefox  
     zypper -n install gedit
 
