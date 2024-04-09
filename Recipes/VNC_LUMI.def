@@ -19,13 +19,14 @@ session.screen0.toolbar.visible:        false
     zypper -n install which
     zypper -n install python3
     zypper -n install python3-pip
-    pip3 install numpy
+    zypper -n install python3-numpy
     zypper -n install xkbcomp
     zypper -n install xkbutils
     zypper -n install xauth
     zypper -n install wget
     zypper -n install tar
     zypper -n install xz
+    zypper -n install gzip
     wget http://www.TurboVNC.org/key/VGL-GPG-KEY
     rpm --import VGL-GPG-KEY
     zypper -n install git
@@ -33,14 +34,5 @@ session.screen0.toolbar.visible:        false
     wget https://sourceforge.net/projects/turbovnc/files/${TURBOVNC_VERSION}/turbovnc-${TURBOVNC_VERSION}.x86_64.rpm
     zypper -n install turbovnc-${TURBOVNC_VERSION}.x86_64.rpm 
     rm turbovnc-${TURBOVNC_VERSION}.x86_64.rpm
-    mkdir -p /opt/
-    cd /opt/
-    wget https://nodejs.org/dist/v16.13.1/node-v16.13.1-linux-x64.tar.xz
-    tar -xvf node-v16.13.1-linux-x64.tar.xz
-    export PATH="$PWD/node-v16.13.1-linux-x64/bin:$PATH"
-    git clone https://github.com/novnc/noVNC
-    cd noVNC 
-    git checkout v1.3.0
-    npm install .
-    cd utils
-    git clone https://github.com/novnc/websockify.git
+    mkdir -p /opt/websockify
+    wget https://github.com/novnc/websockify/archive/master.tar.gz -q -O - | tar xzf - -C /opt/websockify --strip-components=1

@@ -19,7 +19,7 @@ From: opensuse/leap:15.4
     zypper -n install which
     zypper -n install python3
     zypper -n install python3-pip
-    pip3 install numpy
+    zypper -n install python3-numpy
     zypper -n install xkbcomp
     zypper -n install xkbutils
     zypper -n install xauth
