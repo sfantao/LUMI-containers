@@ -9,6 +9,7 @@ from: ghcr.io/lumi-supercomputer/vgl:1.0
     export VGL_DISPLAY=$(getEglCard)
     if [[ ! -e $VGL_DISPLAY ]]; then
         eglDebugInfo
+        exit 1
     else
         vglrun paraview
     fi
