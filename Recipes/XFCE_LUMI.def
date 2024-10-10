@@ -93,6 +93,7 @@ if [[ -z "$@" ]];then
 else
     srun --jobid=$SLURM_JOB_ID --overlap --pty /usr/bin/bash -lc "unset \$(compgen -v | grep SLURM_ | grep -vE \"SLURM_JOB_|SLURM_OOD_ENV\"); $(printf "%q " "$@")"
 fi
+[ $? -ne 0 ] && read
 ' > /usr/bin/host_terminal
     chmod +x /usr/bin/host_terminal
     cp /usr/bin/xterm /usr/bin/real-xterm
