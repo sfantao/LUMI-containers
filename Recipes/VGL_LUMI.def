@@ -20,6 +20,7 @@ From: ghcr.io/lumi-supercomputer/vnc:1.0
 
     echo '#!/bin/bash
     echo "Internal error, failed to get GPU card for EGL"
+    echo "If you are not attempting to use GPU acceleration, this is normal."
     echo "HOST: $(hostname)"
     echo "NVIDIA SMI: $(nvidia-smi)"
     echo "Container: $SINGULARITY_CONTAINER"

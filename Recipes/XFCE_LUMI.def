@@ -19,7 +19,7 @@ From: opensuse/leap:15.4
     zypper -n install which
     zypper -n install python3
     zypper -n install python3-pip
-    pip3 install numpy
+    zypper -n install python3-numpy
     zypper -n install xkbcomp
     zypper -n install xkbutils
     zypper -n install xauth
@@ -89,13 +89,20 @@ From: opensuse/leap:15.4
 ' > /etc/xdg/xfce4/xfconf/xfce-perchannel-xml/xfce4-desktop.xml
    echo -e '#!/bin/bash\n
 if [[ -z "$@" ]];then
-    srun --jobid=$SLURM_JOB_ID --overlap --pty bash -l
+    srun --jobid=$SLURM_JOB_ID --overlap --pty /usr/bin/bash -c "unset \$(compgen -v | grep SLURM_ | grep -vE \"SLURM_JOB_|SLURM_OOD_ENV\"); exec /bin/bash -l"
 else
-    srun --jobid=$SLURM_JOB_ID --overlap --pty bash -lc "$@"
+    srun --jobid=$SLURM_JOB_ID --overlap --pty /usr/bin/bash -lc "unset \$(compgen -v | grep SLURM_ | grep -vE \"SLURM_JOB_|SLURM_OOD_ENV\"); $(printf "%q " "$@")"
 fi
+[ $? -ne 0 ] && read
 ' > /usr/bin/host_terminal
     chmod +x /usr/bin/host_terminal
     cp /usr/bin/xterm /usr/bin/real-xterm
     cp /usr/bin/xfce4-terminal /usr/bin/real-xfce4-terminal
     echo -e '#!/bin/bash\n/usr/bin/real-xterm -e "bash /usr/bin/host_terminal"' > /usr/bin/xterm
-    echo -e '#!/bin/bash\n/usr/bin/real-xfce4-terminal -e "/usr/bin/host_terminal \"$(echo $@ | sed 's/-x//g' )\""' > /usr/bin/xfce4-terminal
+    echo -e '#!/bin/bash
+for arg do
+  shift
+  [ "$arg" = "-x" ] && continue
+  set -- "$@" "$arg"
+done
+/usr/bin/real-xfce4-terminal -e "/usr/bin/host_terminal $(printf "%q " "$@")"' > /usr/bin/xfce4-terminal
