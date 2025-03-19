@@ -25,7 +25,7 @@ jobs:
           fi
   OpenStack-Container:
     needs: OpenStack-Container-Check
-    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
+#    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     permissions:
       packages: write
