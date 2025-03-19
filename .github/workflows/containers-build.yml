@@ -30,8 +30,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      attestations: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
       - name: Log in to registry
@@ -46,6 +44,7 @@ jobs:
     needs: OpenStack-Container
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: ubuntu-latest
+    permissions: {}
     container:
       image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
       credentials:
