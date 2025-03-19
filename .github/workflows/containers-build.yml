@@ -1,4 +1,4 @@
-name: LUMI Container Workflow 
+name: LUMI Container Build Workflow 
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 env:
@@ -18,7 +18,7 @@ jobs:
         run: |
           set -e
           set -o pipefail
-          if git diff --name-only HEAD^ HEAD | grep 'openstack-docker/Dockerfile' ; then
+          if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
             echo "::set-output name=run_job::true"
           else
             echo "::set-output name=run_job::false"
