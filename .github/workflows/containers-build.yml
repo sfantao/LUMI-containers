@@ -1,0 +1,147 @@
+name: LUMI Container Workflow 
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+env:
+  OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+jobs:
+  OpenStack-Container-Check:
+    outputs:
+      run_job: ${{ steps.check_files.outputs.run_job }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: check modified files
+        id: check_files
+        run: |
+          set -e
+          set -o pipefail
+          if git diff --name-only HEAD^ HEAD | grep 'openstack-docker/Dockerfile' ; then
+            echo "::set-output name=run_job::true"
+          else
+            echo "::set-output name=run_job::false"
+          fi
+  OpenStack-Container:
+    needs: OpenStack-Container-Check
+    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build openstack image
+        run: docker build ./openstack-docker --tag $OPENSTACK_IMAGE_NAME
+      - name: Push image
+        run: docker push $OPENSTACK_IMAGE_NAME
+  Start-Runner:
+    needs: OpenStack-Container
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: ubuntu-latest
+    container:
+      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      env:
+        OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
+        OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
+        OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
+        OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
+        OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
+        OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
+        OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+    steps:
+      - name: Remove old instance if exists
+        run: openstack server delete --wait production_containers_workflow || true
+      - name: Create instance
+        run: openstack server create --wait --flavor "standard.tiny" --image "test_containers_workflow_podman_image" --key-name containers_workflow production_containers_workflow
+      - name: Assign server public IP
+        run: openstack server add floating ip production_containers_workflow ${{ vars.CPOUTA_INSTANCE_IP }}
+      - name: Remove old source IPs
+        run : |
+          set -e
+          set -o pipefail
+          openstack security group rule delete \
+            $(openstack security group rule list test_containers_workflow_sec_group_to_remove | grep ' 22:22 ' | awk '{ print $2 }') || true
+      - name: Register source IP
+        run: openstack security group rule create --proto tcp --remote-ip $(curl ifconfig.me) --dst-port 22 test_containers_workflow_sec_group_to_remove
+      - name: Assign security group
+        run: |
+          set -e
+          set -o pipefail
+          openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
+          openstack server add security group production_containers_workflow test_containers_workflow_sec_group_to_remove
+      - name: Assign volume
+        run: openstack server add volume production_containers_workflow test_containers_workflow_vol
+      - name: Wait for instance to be ready
+        run: |
+          set -e
+          set -o pipefail
+          touch cpouta_key.pem
+          chmod 600 cpouta_key.pem
+          echo "${{ secrets.CPOUTA_SSH_PRIVATE_KEY }}" > cpouta_key.pem
+          
+          now=$(date +%s)
+          timeout=$((now + 60))
+          while [ $now -lt $timeout ] ; do
+            if ssh -o StrictHostKeyChecking=no -i cpouta_key.pem ubuntu@${{ vars.CPOUTA_INSTANCE_IP }} hostname > /dev/null ; then
+              exit 0
+            fi
+            sleep 5
+            now=$(date +%s)
+          done
+          exit 1
+      - name: Configure instance
+        run: |
+          set -e
+          set -o pipefail
+          ssh -o StrictHostKeyChecking=no -i cpouta_key.pem ubuntu@${{ vars.CPOUTA_INSTANCE_IP }} \
+            'sudo su - root -c "mount /dev/vdb /media/podman-storage ; cd /home/work/actions-runner ; ./svc.sh start"'
+      - name: Remove old source IPs
+        run : |
+          set -e
+          set -o pipefail
+          openstack security group rule delete \
+            $(openstack security group rule list test_containers_workflow_sec_group_to_remove | grep ' 22:22 ' | awk '{ print $2 }')
+      
+  Build-Container:
+    needs: Start-Runner
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: self-hosted
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+  Stop-Runner:
+    needs: Build-Container
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: ubuntu-latest
+    container:
+      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+      env:
+        OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
+        OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
+        OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
+        OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
+        OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
+        OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
+        OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+    steps:
+      - name: Remove instance
+        run: openstack server delete --wait production_containers_workflow

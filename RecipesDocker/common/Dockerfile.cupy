@@ -1,0 +1,12 @@
+ARG CUPY_VERSION
+RUN $WITH_CONDA ; set -eux ; \
+  git clone --recursive https://github.com/ROCm/cupy /opt/mybuild ; \
+  cd /opt/mybuild ; \
+  export HCC_AMDGPU_TARGET=gfx90a ; \
+  export CUPY_INSTALL_USE_HIP=1 ; \
+  export ROCM_HOME=$ROCM_PATH ; \
+  export CC=$ROCM_PATH/llvm/bin/clang ; \
+  export CXX=$ROCM_PATH/llvm/bin/clang++ ; \
+  python setup.py bdist_wheel ; \
+  pip install dist/*.whl ; \
+  rm -rf /opt/mybuild

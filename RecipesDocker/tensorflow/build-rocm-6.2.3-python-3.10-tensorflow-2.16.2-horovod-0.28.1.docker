@@ -1,0 +1,76 @@
+#
+# Install conda environment
+# 
+ARG PYTHON_VERSION
+RUN $WITH_CONDA; set -eux ; \
+  conda create -n tensorflow python=$PYTHON_VERSION
+  
+ENV WITH_CONDA "source /opt/miniconda3/bin/activate tensorflow"
+
+ARG TENSORFLOW_VERSION
+RUN $WITH_CONDA; set -eux ; \
+  pip install tensorflow-rocm==$TENSORFLOW_VERSION -f https://repo.radeon.com/rocm/manylinux/rocm-rel-6.2.3/
+
+ARG TF_KERAS_VERSION
+RUN $WITH_CONDA; set -eux ; \
+  pip install --no-deps tf-keras==$TF_KERAS_VERSION
+
+#
+# Install horovod
+#
+RUN $WITH_CONDA; set -eux ; \
+  pip install cmake
+
+ARG HOROVOD_VERSION
+RUN --mount=type=bind,from=h,source=/,dst=/h \
+  $WITH_CONDA ; set -eux ; \
+  tar -C / -xf /h/cpe-$CPE_VERSION.tar ; \
+  \
+  cd $MPICH_PATH/../.. ; \
+  ln -s crayclang cray ; \
+  \
+  git clone --recursive -b v0.28.1 https://github.com/horovod/horovod /opt/mybuild ; \
+  sed -i "s#set(CMAKE_MODULE_PATH#set(CMAKE_MODULE_PATH $ROCM_PATH/lib/cmake/hip#g" /opt/mybuild/horovod/common/ops/rocm/CMakeLists.txt ; \
+  \
+  cd /opt/mybuild ; \
+  HOROVOD_WITHOUT_MXNET=1 \
+    HOROVOD_WITHOUT_PYTORCH=1 \
+    HOROVOD_GPU=ROCM \
+    HOROVOD_GPU_OPERATIONS=NCCL \
+    HOROVOD_WITHOUT_GLOO=1 \
+    HOROVOD_WITH_MPI=1 \
+    HOROVOD_WITH_TENSORFLOW=1 \
+    HOROVOD_ROCM_PATH=$ROCM_PATH \
+    HOROVOD_RCCL_HOME=$ROCM_PATH \
+    RCCL_INCLUDE_DIRS=$ROCM_PATH/include/rccl \
+    HOROVOD_RCCL_LIB=$ROCM_PATH/lib \
+    HCC_AMDGPU_TARGET=gfx90a \
+    CMAKE_PREFIX_PATH=$MPICH_PATH \
+    CPATH=$ROCM_PATH/include/rccl \
+    python setup.py bdist_wheel ; \
+    \
+    mkdir -p /opt/wheels ; \
+    cp /opt/mybuild/dist/horovod-*.whl /opt/wheels ; \
+    \
+    rm -rf /opt/mybuild; \
+    $REMOVE_CRAY_DEPS
+
+RUN $WITH_CONDA ; set -eux ; \
+  pip install /opt/wheels/horovod-*.whl
+ 
+#
+# Install OpenNMT if requested
+#
+ARG OPENNMT_VERSION
+RUN $WITH_CONDA ; set -eux ; \
+  if [ -z "$OPENNMT_VERSION" ] ; then exit 0; fi ; \
+  pip install opennmt-tf==$OPENNMT_VERSION
+
+#
+# Fix SLURM detection
+#
+# RUN set -eux ; \
+#   cd /opt/miniconda3/envs/tensorflow/lib/python3.10/site-packages/tensorflow/python/distribute/cluster_resolver ; \
+#   mv slurm_cluster_resolver.py slurm_cluster_resolver.py.orig ; \
+#   curl -LO https://raw.githubusercontent.com/tensorflow/tensorflow/66e587c780c59f6bad2ddae5c45460440002dc68/tensorflow/python/distribute/cluster_resolver/slurm_cluster_resolver.py
+  

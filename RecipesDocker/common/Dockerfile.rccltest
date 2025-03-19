@@ -1,0 +1,29 @@
+RUN --mount=type=bind,from=h,source=/,dst=/h \
+  set -eux ; \
+  tar -C / -xf /h/cpe-$CPE_VERSION.tar ; \
+  \
+  git clone https://github.com/rocm/rccl-tests /opt/mybuild ; \
+  cd /opt/mybuild ; \
+  RMAJOR=$(echo $ROCM_RELEASE | cut -d '.' -f1) ; \
+  RMINOR=$(echo $ROCM_RELEASE | cut -d '.' -f2) ; \
+  if [ $RMAJOR -lt 6 -o $RMINOR -lt 2 ] ; then \
+    git checkout -b mydev ae3e635 ; \
+  else \
+    git checkout -b mydev 448c4c7 ; \
+  fi ; \
+  sed -i 's/-std=c++14/-std=c++14 --amdgpu-target=gfx90a:xnack- --amdgpu-target=gfx90a:xnack+/g' /opt/mybuild/src/Makefile ; \
+  \
+  cd /opt/mybuild ; \
+  CC=gcc-12 \
+    DEBUG=$RCCL_DEBUG \
+    CXX=g++-12 \
+    MPI_HOME=$MPICH_PATH \
+    ROCM_PATH=$ROCM_PATH \
+    MPI=1 \
+    NCCL_HOME=$ROCM_PATH/rccl \
+    nice make -j ; \
+  mkdir /opt/rccltests ; \
+  mv /opt/mybuild/build/* /opt/rccltests ; \
+  rm -rf /opt/mybuild ; \
+  $REMOVE_CRAY_DEPS
+  

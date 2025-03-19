@@ -1,0 +1,36 @@
+#
+# Install MPI4PY - we use clang to build has the default linker allow undefined symbols 
+# in all dependency libs - '-Wl,--allow-shlib-undefined' with gcc/GNU linker should
+# be equivalent.   
+#
+ARG MPI4PY_VERSION
+
+RUN --mount=type=bind,from=h,source=/,dst=/h \
+  $WITH_CONDA ; set -eux ; \
+  tar -C / -xf /h/cpe-$CPE_VERSION.tar ; \
+  \
+  mkdir /opt/builds ; \
+  cd /opt/builds ; \
+  curl -LO https://github.com/mpi4py/mpi4py/releases/download/$MPI4PY_VERSION/mpi4py-$MPI4PY_VERSION.tar.gz ; \
+  tar -xf mpi4py-$MPI4PY_VERSION.tar.gz ; \
+  rm -rf mpi4py-$MPI4PY_VERSION.tar.gz ; \
+  \
+  cd /opt/builds/mpi4py-* ; \
+  \
+  echo "[lumi]" >> mpi.cfg ; \
+  echo "mpi_dir              = $MPICH_PATH" >> mpi.cfg ; \
+  echo "mpicc                = $ROCM_PATH/llvm/bin/clang" >> mpi.cfg ; \
+  echo "mpicxx               = $ROCM_PATH/llvm/bin/clang++" >> mpi.cfg ; \
+  echo "libraries            = mpi_cray  mpi_gtl_hsa" >> mpi.cfg ; \
+  echo "library_dirs         = %(mpi_dir)s/lib:%(mpi_dir)s/../../../gtl/lib:$LIBFABRIC_PATH/lib64:/opt/cray/pe/lib64:/opt/cray/pe/lib64/cce/:/opt/cray-deps" >> mpi.cfg ; \
+  echo "include_dirs         = %(mpi_dir)s/include" >> mpi.cfg ; \
+  \
+  CC=clang CXX=clang++ python setup.py build --mpi=lumi ; \
+  CC=clang CXX=clang++ python setup.py bdist_wheel ; \
+  mkdir -p /opt/wheels ; \
+  cp dist/mpi4py-*.whl /opt/wheels ; \
+  cd / ; rm -rf /opt/builds ;\
+  $REMOVE_CRAY_DEPS
+
+RUN $WITH_CONDA ; set -eux ; \
+  pip install /opt/wheels/mpi4py-*.whl

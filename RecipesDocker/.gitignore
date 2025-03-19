@@ -1,0 +1,8 @@
+/test.sbatch
+/test.tar
+/*/*.done
+/*/*.log
+/*/.tmp-*
+.all-test-files
+singularity-images
+

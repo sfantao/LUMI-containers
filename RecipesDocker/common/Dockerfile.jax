@@ -1,0 +1,10 @@
+ARG JAX_VERSION
+
+RUN $WITH_CONDA; set -eux ; \
+  P="${PYTHON_VERSION//./}" ; \
+  python3 -m pip install https://github.com/ROCm/jax/releases/download/rocm-jax-v${JAX_VERSION}/jaxlib-${JAX_VERSION}-cp${P}-cp${P}-manylinux_2_28_x86_64.whl ; \
+  python3 -m pip install https://github.com/ROCm/jax/releases/download/rocm-jax-v${JAX_VERSION}/jax_rocm60_pjrt-${JAX_VERSION}-py3-none-manylinux_2_28_x86_64.whl ; \
+  python3 -m pip install https://github.com/ROCm/jax/releases/download/rocm-jax-v${JAX_VERSION}/jax_rocm60_plugin-${JAX_VERSION}-cp${P}-cp${P}-manylinux_2_28_x86_64.whl ; \
+  python3 -m pip install https://github.com/ROCm/jax/archive/refs/tags/rocm-jax-v${JAX_VERSION}.tar.gz
+  
+ENV JAX_PLATFORMS "rocm,cpu"
