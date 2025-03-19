@@ -67,7 +67,7 @@ jobs:
       - name: Create instance
         run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
       - name: Assign server public IP
-        run: openstack server add floating ip production_containers_workflow ${{ vars.CPOUTA_INSTANCE_IP }}
+        run: openstack server add floating ip production_containers_workflow ${{ secrets.CPOUTA_INSTANCE_IP }}
       - name: Assign security group
         run: |
           set -e
