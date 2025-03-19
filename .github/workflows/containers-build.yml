@@ -28,8 +28,10 @@ jobs:
     if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: read
+      packages: write
+      attestations: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - name: Log in to registry
