@@ -60,7 +60,7 @@ jobs:
         OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
         OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
         OS_MY_FLAVOUR: "hpc.5.64core"
-        OS_MY_IMAGE: "4531c010-a38b-4f0b-927f-2c07ca35c9d2"
+        OS_MY_IMAGE: "3b54f9c3-4c21-482d-b8f0-a0b67ae36eda"
     steps:
       - name: Remove old instance if exists
         run: openstack server delete --wait production_containers_workflow || true
@@ -76,22 +76,22 @@ jobs:
       - name: Assign volume
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
       
-  # Build-Container:
-  #   needs: Start-Runner
-  #   if: ${{ ! failure() && ! cancelled() }}
-  #   runs-on: self-hosted
-  #   steps:
-  #     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-  #     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-  #     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-  #     - name: Check out repository code
-  #       uses: actions/checkout@v4
-  #     - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-  #     - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-  #     - name: List files in the repository
-  #       run: |
-  #         ls ${{ github.workspace }}
-  #     - run: echo "🍏 This job's status is ${{ job.status }}."
+  Build-Container:
+    needs: Start-Runner
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: self-hosted
+    steps:
+      - name: Prepare VM for docker builds
+        run: sudo prepare-vm
+      - name: List Docker images
+        run: docker images
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: List files in the repository
+        run: |
+          cd ${{ github.workspace }}/RecipesDocker
+          ls -la
+      - run: echo "This job's status is ${{ job.status }}."
   # Stop-Runner:
   #   needs: Build-Container
   #   if: ${{ ! failure() && ! cancelled() }}
