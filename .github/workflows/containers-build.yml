@@ -37,7 +37,9 @@ jobs:
       - name: Build openstack image
         run: docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
       - name: Push image
-        run: docker push $OPENSTACK_IMAGE_NAME
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push $OPENSTACK_IMAGE_NAME
   Start-Runner:
     needs: OpenStack-Container
     if: ${{ ! failure() && ! cancelled() }}
