@@ -21,11 +21,11 @@ jobs:
           if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
             echo "::set-output name=run_job::true"
           else
-            echo "::set-output name=run_job::false"
+            echo "::set-output name=run_job::true"
           fi
   OpenStack-Container:
     needs: OpenStack-Container-Check
-#    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
+    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -35,7 +35,7 @@ jobs:
       - name: Log in to registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build openstack image
-        run: docker build ./openstack-docker --tag $OPENSTACK_IMAGE_NAME
+        run: docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
       - name: Push image
         run: docker push $OPENSTACK_IMAGE_NAME
   Start-Runner:
