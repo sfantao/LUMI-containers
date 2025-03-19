@@ -2,7 +2,7 @@ name: LUMI Container Build Workflow
 run-name: ${{ github.actor }} is running LUMI container build workflow
 on: [push]
 env:
-  OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+  OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack2:latest"
 jobs:
   OpenStack-Container-Check:
     outputs:
@@ -47,7 +47,7 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: ubuntu-latest
     container:
-      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+      image: "ghcr.io/${{ github.repository_owner }}/openstack2:latest"
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.github_token }}
