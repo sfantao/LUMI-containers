@@ -75,24 +75,22 @@ jobs:
       - name: Assign volume
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
       - name: Check runner is ready
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -L \
                 -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
           sleep 10
           curl -L \
                 -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
           sleep 10
           curl -L \
                 -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer $GH_TOKEN" \
+                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
                 -H "X-GitHub-Api-Version: 2022-11-28" \
                 https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
           sleep 10
