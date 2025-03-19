@@ -60,7 +60,7 @@ jobs:
         OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
         OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
         OS_MY_FLAVOUR: "hpc.5.64core"
-        OS_MY_IMAGE: "3b54f9c3-4c21-482d-b8f0-a0b67ae36eda"
+        OS_MY_IMAGE: "828d8dde-6ed9-40cc-8fb6-9546a09a03e0"
     steps:
       - name: Remove old instance if exists
         run: openstack server delete --wait production_containers_workflow || true
