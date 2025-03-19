@@ -19,7 +19,7 @@ jobs:
           set -e
           set -o pipefail
           if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
-            echo "::set-output name=run_job::true"
+            echo "::set-output name=run_job::false"
           else
             echo "::set-output name=run_job::true"
           fi
@@ -59,59 +59,22 @@ jobs:
         OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
         OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
         OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+        OS_MY_FLAVOUR: "hpc.5.64core"
+        OS_MY_IMAGE: "4531c010-a38b-4f0b-927f-2c07ca35c9d2"
     steps:
       - name: Remove old instance if exists
         run: openstack server delete --wait production_containers_workflow || true
       - name: Create instance
-        run: openstack server create --wait --flavor "standard.tiny" --image "test_containers_workflow_podman_image" --key-name containers_workflow production_containers_workflow
+        run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
       - name: Assign server public IP
         run: openstack server add floating ip production_containers_workflow ${{ vars.CPOUTA_INSTANCE_IP }}
-      - name: Remove old source IPs
-        run : |
-          set -e
-          set -o pipefail
-          openstack security group rule delete \
-            $(openstack security group rule list test_containers_workflow_sec_group_to_remove | grep ' 22:22 ' | awk '{ print $2 }') || true
-      - name: Register source IP
-        run: openstack security group rule create --proto tcp --remote-ip $(curl ifconfig.me) --dst-port 22 test_containers_workflow_sec_group_to_remove
       - name: Assign security group
         run: |
           set -e
           set -o pipefail
           openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
-          openstack server add security group production_containers_workflow test_containers_workflow_sec_group_to_remove
       - name: Assign volume
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
-      - name: Wait for instance to be ready
-        run: |
-          set -e
-          set -o pipefail
-          touch cpouta_key.pem
-          chmod 600 cpouta_key.pem
-          echo "${{ secrets.CPOUTA_SSH_PRIVATE_KEY }}" > cpouta_key.pem
-          
-          now=$(date +%s)
-          timeout=$((now + 60))
-          while [ $now -lt $timeout ] ; do
-            if ssh -o StrictHostKeyChecking=no -i cpouta_key.pem ubuntu@${{ vars.CPOUTA_INSTANCE_IP }} hostname > /dev/null ; then
-              exit 0
-            fi
-            sleep 5
-            now=$(date +%s)
-          done
-          exit 1
-      - name: Configure instance
-        run: |
-          set -e
-          set -o pipefail
-          ssh -o StrictHostKeyChecking=no -i cpouta_key.pem ubuntu@${{ vars.CPOUTA_INSTANCE_IP }} \
-            'sudo su - root -c "mount /dev/vdb /media/podman-storage ; cd /home/work/actions-runner ; ./svc.sh start"'
-      - name: Remove old source IPs
-        run : |
-          set -e
-          set -o pipefail
-          openstack security group rule delete \
-            $(openstack security group rule list test_containers_workflow_sec_group_to_remove | grep ' 22:22 ' | awk '{ print $2 }')
       
   Build-Container:
     needs: Start-Runner
@@ -129,23 +92,23 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-  Stop-Runner:
-    needs: Build-Container
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: ubuntu-latest
-    container:
-      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
-      env:
-        OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
-        OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
-        OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
-        OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
-        OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
-        OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
-        OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
-    steps:
-      - name: Remove instance
-        run: openstack server delete --wait production_containers_workflow
+  # Stop-Runner:
+  #   needs: Build-Container
+  #   if: ${{ ! failure() && ! cancelled() }}
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+  #     credentials:
+  #       username: ${{ github.actor }}
+  #       password: ${{ secrets.github_token }}
+  #     env:
+  #       OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
+  #       OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
+  #       OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
+  #       OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
+  #       OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
+  #       OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
+  #       OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+  #   steps:
+  #     - name: Remove instance
+  #       run: openstack server delete --wait production_containers_workflow
