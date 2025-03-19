@@ -76,7 +76,7 @@ jobs:
       - name: Assign volume
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
       - name: Check runner is ready
-        run: \
+        run: |
           curl -L \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
