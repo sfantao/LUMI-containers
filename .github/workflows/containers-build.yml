@@ -44,6 +44,7 @@ jobs:
     needs: OpenStack-Container
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: ubuntu-latest
+    permissions: write-all
     container:
       image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
       credentials:
