@@ -76,24 +76,15 @@ jobs:
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
       - name: Check runner is ready
         run: |
-          curl -L \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
-          sleep 10
-          curl -L \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
-          sleep 10
-          curl -L \
-                -H "Accept: application/vnd.github+json" \
-                -H "Authorization: Bearer ${{ secrets.MY_API_KEY }}" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                https://api.github.com/repos/sfantao/lumi-containers/actions/runners/21
-          sleep 10
+          now=$(date +%s)
+          timeout=$((now + 60))
+          while [ $now -lt $timeout ] ; do
+            if nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22  > /dev/null ; then
+              exit 0
+            fi
+            sleep 5
+            now=$(date +%s)
+          done
       
   Build-Container:
     needs: Start-Runner
