@@ -18,7 +18,7 @@ for f in \
 
     rdep=$(echo $b | grep -Eo 'rocm-[0-9]+\.[0-9]+\.[0-9]+-')
     if [[ "$rdep" != "" ]] ; then
-      dep="rocm-build-${rdep%-}"
+      dep=$(echo "rocm-build-${rdep%-}" | sed 's/\./_/g')
     fi
 
     cat >> generate-workflow-deps.out << EOF
