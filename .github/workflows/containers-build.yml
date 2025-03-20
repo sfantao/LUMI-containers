@@ -96,15 +96,15 @@ jobs:
         run: docker images
       - name: Check out repository code
         uses: actions/checkout@v4
-      - run: ./lumi-containers-build rocm 1
+      - run: ./lumi-containers-build.sh rocm 1
         working-directory: ${{ github.workspace }}/RecipesDocker
-      - run: ./lumi-containers-build jax 1
+      - run: ./lumi-containers-build.sh jax 1
         working-directory: ${{ github.workspace }}/RecipesDocker
-      - run: ./lumi-containers-build mpi4py 1
+      - run: ./lumi-containers-build.sh mpi4py 1
         working-directory: ${{ github.workspace }}/RecipesDocker
-      - run: ./lumi-containers-build pytorch 1
+      - run: ./lumi-containers-build.sh pytorch 1
         working-directory: ${{ github.workspace }}/RecipesDocker
-      - run: ./lumi-containers-build tensorflow 1
+      - run: ./lumi-containers-build.sh tensorflow 1
         working-directory: ${{ github.workspace }}/RecipesDocker
       - run: ./lumi-containers-build.sh alphafold 1
         working-directory: ${{ github.workspace }}/RecipesDocker
