@@ -9,7 +9,8 @@ for f in $(find . -iname 'build-rocm-*.sh') ; do
     d=$(dirname $f | sed 's#./##g')
     b=$(basename ${f%.sh})
     dep="Prepare-Build-Containers"
-    all="$all $d-$b"
+    tag=$(echo $d-$b | sed 's/\./_/g')
+    all="$all $tag"
 
     rdep=$(echo $b | grep -Eo 'rocm-[0-9]+\.[0-9]+\.[0-9]+-')
     if [[ "$rdep" != "" ]] ; then
@@ -17,7 +18,7 @@ for f in $(find . -iname 'build-rocm-*.sh') ; do
     fi
 
     cat >> generate-workflow-deps.out << EOF
-  $d-$b:
+  $tag:
     needs: $dep
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
