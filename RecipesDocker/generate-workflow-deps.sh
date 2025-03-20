@@ -4,7 +4,11 @@ rm -rf generate-workflow-deps.out
 
 all=''
 
-for f in $(find . -iname 'build-rocm-*.sh') ; do
+# We need to process rocm entries first.
+for f in \
+    $(find rocm -iname 'build-rocm-*.sh') \
+    $(find . -iname 'build-rocm-*.sh' -not -path "./rocm/*") \
+    ; do
 
     d=$(dirname $f | sed 's#./##g')
     b=$(basename ${f%.sh})
