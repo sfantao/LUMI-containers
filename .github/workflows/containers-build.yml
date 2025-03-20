@@ -97,7 +97,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Capture Cray Environment
-        run: ./cpe-24.03.sh
+        run: PERSIST_CPE_FOLDER=/media/podman-storage/work/ongoing/ongoing ./cpe-24.03.sh
         working-directory: ${{ github.workspace }}/RecipesDocker/helper-files
       - run: ./lumi-containers-build.sh rocm 1
         working-directory: ${{ github.workspace }}/RecipesDocker
