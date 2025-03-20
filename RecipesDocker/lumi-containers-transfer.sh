@@ -1,47 +1,8 @@
 #!/bin/bash -e
 
-target=all
-procs=4
-
-#
-# Change default target if that has been provided.
-#
-if [ $# -eq 2 ] ; then
-  target=$1
-  procs=$2
-fi
-
-# export  DOCKER_BUILDKIT=0
-export BUILDKIT_STEP_LOG_MAX_SIZE=-1
-export BUILDKIT_STEP_LOG_MAX_SPEED=-1
-export DOCKERBUILD="docker build \
-                      --ulimit nofile=32000:32000 \
-                      --network=host "
-
-#
-# Build helper file container
-#
-(cd helper-files ; docker build -t h .)
-
-#
-# Build recipes
-#
-
-echo "Starting image building..."
-make -j$procs $target
-echo "Done building images..."
-
-#
-# Close
-#
-echo " ------------------------------------ "
-echo " Recipes build completed successfully "
-echo " ------------------------------------ "
-
-#
 # Upstream and test images.
 #
-LUMI_TEST_FOLDER="/pfs/lustrep3/scratch/project_462000394/containers/staging-area"
+LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area"
 
 Nodes=4
 echo "test.sbatch" > .all-test-files
@@ -97,8 +58,6 @@ mkdir -p $LUMI_TEST_FOLDER/lumi
 cd $LUMI_TEST_FOLDER
 
 EOF
-
-files='pytorch/build-rocm-6.2.4-python-3.12-pytorch-v2.6.0.done'
 
 if [[ "$files" == '' ]] ; then
   if [[ "$target" == "all" ]] ; then

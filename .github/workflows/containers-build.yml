@@ -84,10 +84,11 @@ jobs:
 #           #   openstack server show production_containers_workflow
 #           #   now=$(date +%s)
 #           # done
-  Build-Container:
+
+  Build-Containers:
     # needs: Start-Runner
     if: ${{ ! failure() && ! cancelled() }}
-    runs-on: self-hosted
+    runs-on: cpouta
     steps:
       - name: Prepare VM for docker builds
         run: sudo prepare-vm
@@ -95,11 +96,27 @@ jobs:
         run: docker images
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: List files in the repository
-        run: |
-          cd ${{ github.workspace }}/RecipesDocker
-          ls -la
-      - run: echo "This job's status is ${{ job.status }}."
+      - run: ./lumi-containers-build rocm 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+      - run: ./lumi-containers-build jax 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+      - run: ./lumi-containers-build mpi4py 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+      - run: ./lumi-containers-build pytorch 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+      - run: ./lumi-containers-build tensorflow 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+      - run: ./lumi-containers-build.sh alphafold 1
+        working-directory: ${{ github.workspace }}/RecipesDocker
+
+  Transfer-Containers:
+    needs: Build-Containers
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta
+    steps:
+      - name: Transfer containers to LUMI
+        run: ./lumi-containers-transfer.sh 
+        working-directory: ${{ github.workspace }}/RecipesDocker
   # Stop-Runner:
   #   needs: Build-Container
   #   if: ${{ ! failure() && ! cancelled() }}

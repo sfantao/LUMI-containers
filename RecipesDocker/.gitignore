@@ -4,5 +4,4 @@
 /*/*.log
 /*/.tmp-*
 .all-test-files
-singularity-images
-
+/build-singularity-images.sh
