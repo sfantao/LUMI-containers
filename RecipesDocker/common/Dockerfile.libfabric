@@ -1,0 +1,67 @@
+# Latest libfabric build
+
+
+if [ ! -d  $wd/shs-libcxi ] ; then
+  git clone --recursive https://github.com/HewlettPackard/shs-libcxi $wd/shs-libcxi
+  cd $wd/shs-libcxi
+  (ml -buildtools ; ./autogen.sh)
+fi
+
+
+ARG CASSINI_HEADERS_VERSION 9a8a738a879f007849fbc69be8e3487a4abf0952
+ARG CXI_DRIVER_VERSION c284516fa8d0027b8f84e8ca818e8c6bbe320bd8
+ARG LIBCXI_VERSION 0f3609b5e224636abffc7ceffe6f4e9c83244c08
+
+
+RUN set -eux ; \
+  git clone -b $CASSINI_HEADERS_VERSION --recursive https://github.com/HewlettPackard/shs-cassini-headers /opt/cassini-headers ; \
+  git clone -b $CXI_DRIVER_VERSION --recursive https://github.com/HewlettPackard/shs-cxi-driver /opt/cxi-driver ; \
+  git clone -b $LIBCXI_VERSION --recursive https://github.com/HewlettPackard/shs-libcxi /opt/shs-libcxi-src ; \
+  export CPATH=/opt/cassini-headers/include:$CPATH ; \
+  export CPATH=/opt/cxi-driver/include:$CPATH ; \
+  \
+  cd /opt/shs-libcxi-src ; \
+  ./autogen.sh ; \
+  \
+  cd /opt/shs-libcxi-src ; \
+  CC=gcc-12 \
+    CXX=g++-12 \
+    CFLAGS='-Wno-unused-but-set-variable' \
+      ./configure --prefix=/opt/shs-libcxi --with-rocm=$ROCM_PATH \
+        --without-systemd \
+        --with-systemdsystemunitdir=$wd/shs-libcxi-install/systemdsystemunitdir \
+        --with-udevrulesdir=$wd/shs-libcxi-install/udevrulesdir ; \
+  \
+  sed -i "s#/usr/share/cassini-headers#/opt/cassini-headers/share/cassini-headers#g" /opt/shs-libcxi-src/utils/cxi_dump_csrs.py
+  \
+  cd /opt/shs-libcxi-src ; \
+  make VERBOSE=1 V=1 -j ; \
+  make VERBOSE=1 V=1 -j install ; \
+  \
+  mv /opt/shs-libcxi-src/include /opt/shs-libcxi/include 
+
+ENV LD_LIBRARY_PATH=/opt/shs-libcxi/lib:$LD_LIBRARY_PATH
+ENV LIBFABRIC_VERSION "e08d3161b8038ebfa50a4eb5bf76132e4eaeb137"
+
+RUN set -eux ; \
+  export CPATH=/opt/shs-libcxi/include:$CPATH ; \
+  export LIBRARY_PATH=/opt/shs-libcxi/lib:$LIBRARY_PATH ; \
+  \
+  git clone -b $LIBFABRIC_VERSION --recursive https://github.com/ofiwg/libfabric /opt/libfabric-src ; \
+  \
+  cd /opt/libfabric-src ; \
+  ./autogen.sh ; \
+  \
+  mkdir /opt/libfabric-src/build
+  \
+  cd /opt/libfabric-src/build
+  ../configure CC=cc --prefix=/opt/libfabric \
+    LDFLAGS=-Wl,--build-id --enable-only \
+    --enable-restricted-dl --enable-tcp --enable-udp --enable-rxm --enable-rxd --enable-hook_debug \
+    --enable-hook_hmem --enable-dmabuf_peer_mem --enable-cxi=$wd/shs-libcxi-install --enable-gdrcopy-dlopen --with-rocr=/opt/rocm
+  \
+  cd /opt/libfabric-src/build ; \
+  nice make V=1 VERBOSE=1 -j  ; \
+  nice make V=1 VERBOSE=1 -j install ; \
+
+ENV LIBFABRIC_PATH=/opt/libfabric

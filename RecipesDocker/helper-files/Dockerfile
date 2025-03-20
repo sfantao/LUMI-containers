@@ -5,4 +5,5 @@ COPY \
   cpe-24.03.tar \
   rocm_agent_enumerator \
   rocminfo \
+  aws.patch \
   /

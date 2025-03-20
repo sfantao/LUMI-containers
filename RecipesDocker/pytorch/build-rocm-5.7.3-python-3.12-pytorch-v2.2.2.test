@@ -537,3 +537,191 @@ $SCMD \
     -B /pfs/lustrep2/scratch/project_462000125/samantao/data-sets/TransformerEngine/examples/pytorch/minGPT:/minGPT \
     $1 \
     /myrun/run.sh |& tee res.log
+
+#
+# Megatron
+#
+
+rm -rf run.sh
+cat > run.sh << EOF
+#!/bin/bash -e
+
+cd /myrun/megatron/examples/gpt3
+
+\$WITH_CONDA
+# source /myrun/newte/venv/bin/activate
+source /myrun/newte/venv-fa273/bin/activate
+
+set -x
+
+# Runs the "175B" parameter model
+
+export MASTER_PORT=29500
+export WORLD_SIZE=\$SLURM_NPROCS
+export RANK=\$SLURM_PROCID
+export LOCAL_RANK=\$SLURM_LOCALID
+
+export CUDA_DEVICE_MAX_CONNECTIONS=1
+export CC=gcc-12
+export CXX=g++-12
+
+export NVTE_FRAMEWORK=pytorch
+export NVTE_ROCM_ARCH=gfx90a
+
+CHECKPOINT_PATH=/myrun #<Specify path>
+TENSORBOARD_LOGS_PATH=/myrun #<Specify path>
+VOCAB_FILE=/megatron-data/gpt2-vocab.json #<Specify path to file>/gpt2-vocab.json
+MERGE_FILE=/megatron-data/gpt2-merges.txt #<Specify path to file>/gpt2-merges.txt
+DATA_PATH=/megatron-data/my-gpt2_text_document #<Specify path and file prefix>_text_document
+
+GPT_MODEL_ARGS=(
+    --num-layers 96 
+    --hidden-size 12288 
+    --num-attention-heads 96 
+    --seq-length 2048 
+    --max-position-embeddings 2048 
+    --attention-backend flash # Can use (flash/fused/unfused/local)
+)
+
+TRAINING_ARGS=(
+    --micro-batch-size 8
+    --global-batch-size 2048 
+    # sfantao --rampup-batch-size 16 16 5859375 
+    --train-iters 500000 
+    --weight-decay 0.1 
+    --adam-beta1 0.9 
+    --adam-beta2 0.95 
+    --init-method-std 0.006 
+    --clip-grad 1.0 
+    --fp16
+    --lr 6.0e-5 
+    --lr-decay-style cosine 
+    --min-lr 6.0e-6
+    --lr-warmup-fraction .001 
+    --lr-decay-iters 430000 
+)
+
+MODEL_PARALLEL_ARGS=(
+	--tensor-model-parallel-size 1 #sfantao 8 
+	--pipeline-model-parallel-size 1 #sfantao 16 
+)
+
+DATA_ARGS=(
+    --data-path \$DATA_PATH 
+    --vocab-file \$VOCAB_FILE 
+    --merge-file \$MERGE_FILE 
+    --split 949,50,1
+)
+
+EVAL_AND_LOGGING_ARGS=(
+    --log-interval 1
+    --log-throughput
+    --log-progress
+    --save-interval 10000 
+    --eval-interval 1000 
+    --eval-iters 10
+    --tensorboard-dir \$TENSORBOARD_LOGS_PATH 
+)
+
+EXTRA_ARGS=(
+       --num-layers 32
+       --hidden-size 4096
+       --num-attention-heads 32
+       --seq-length 1024
+       --tensor-model-parallel-size 2
+       --pipeline-model-parallel-size 2
+       --sequence-parallel
+       --distributed-timeout-minutes 3
+       --no-gradient-accumulation-fusion
+       --num-workers 4
+    #    --profile-ranks 6
+    #    --profile-step-start 31
+    #    --profile-step-end 34
+    #    --use-pytorch-profiler
+    #    --profile
+       --train-iters 5
+)
+
+# export TORCH_LOGS="+dynamo"
+# export TORCHDYNAMO_VERBOSE=1
+# export TORCH_DISTRIBUTED_DEBUG=INFO
+
+# export AMD_LOG_LEVEL=4
+# export NVTE_DEBUG=1
+# export NVTE_DEBUG_LEVEL=2
+
+export NCCL_DEBUG=INFO
+export NCCL_DEBUG_SUBSYS=INIT,COLL
+# export NCCL_DEBUG_SUBSYS=INIT
+# export RCCL_KERNEL_COLL_TRACE_ENABLE=1
+export NCCL_DEBUG_FILE=/tmp/$(whoami)-rccl-rank\$SLURM_PROCID.txt
+
+# export NCCL_DEBUG=INFO
+# export NCCL_DEBUG_SUBSYS=INIT
+
+# TORCH_NCCL_HIGH_PRIORITY=1 
+# GPU_MAX_HW_QUEUES=8
+
+# unset CXI_FORK_SAFE
+# unset CXI_FORK_SAFE_HP
+# unset FI_CXI_DISABLE_CQ_HUGETLB
+
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/libfabric-install-1.22.0/lib:\$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/aws-ofi-rccl-install:\$LD_LIBRARY_PATH
+
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/libfabric-install-master/lib:\$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/aws-ofi-rccl2-install:\$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/libfabric-install-master/lib:\$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/aws-ofi-rccl2-install:\$LD_LIBRARY_PATH
+
+export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/rccl-2025-02-26-85eb1f1/lib:\$LD_LIBRARY_PATH
+
+# if [ \$SLURM_PROCID -eq 0 ] ; then
+#   ldd /pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/aws-ofi-rccl2-install/librccl-net.so
+# fi
+
+# exit 0
+
+export FI_LOG_LEVEL=Debug #Libfabric logging. May cause performance degredation
+export FI_CXI_LOG_LEVEL=debug
+export NCCL_NCHANNELS_PER_PEER=32
+
+python -u /myrun/megatron/pretrain_gpt.py \
+    \${GPT_MODEL_ARGS[@]} \
+    \${TRAINING_ARGS[@]} \
+    \${MODEL_PARALLEL_ARGS[@]} \
+    \${DATA_ARGS[@]} \
+    \${EVAL_AND_LOGGING_ARGS[@]} \
+    \${EXTRA_ARGS[@]} || true
+
+mv \$NCCL_DEBUG_FILE /myrun/rccl-logs-megatron
+EOF
+chmod +x run.sh
+
+if [ ! -d megatron ] ; then
+    git clone -b rocm_dev https://github.com/ROCm/Megatron-LM megatron
+fi
+
+#sss=/pfs/lustrep2/scratch/project_462000125/samantao/tickets/megatron/official_megatron.sif
+sss=/pfs/lustrep3/scratch/project_462000394/containers/staging-area/lumi/lumi-pytorch-rocm-6.2.4-python-3.12-pytorch-v2.6.0-dockerhash-0fb1415058b3.sif
+#sss=$1
+
+rm -rf /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/pytorch/rccl-logs-megatron/*
+
+# rm -rf /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
+# mkdir /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
+# cd /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
+
+MASTER_ADDR=$(scontrol show hostname "$SLURM_NODELIST" | head -n1) \
+$SCMD \
+    -B /boot/config-5.14.21-150500.55.49_13.0.56-cray_shasta_c \
+    -B /pfs/lustrep3/scratch/project_462000394/containers \
+    -B /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/pytorch:/myrun \
+    -B /pfs/lustrep2/scratch/project_462000125/samantao/amd-data:/megatron-data \
+    -B /pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19 \
+    $sss \
+    /myrun/run.sh |& tee res.log

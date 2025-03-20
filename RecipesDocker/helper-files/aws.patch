@@ -1,0 +1,17 @@
+diff --git a/src/nccl_ofi_net.c b/src/nccl_ofi_net.c
+index ac490f0..570e41d 100644
+--- a/src/nccl_ofi_net.c
++++ b/src/nccl_ofi_net.c
+@@ -22,6 +22,12 @@
+ #  define MEMORY_TYPE_ATTRIBUTE(x) (x).type
+ #endif
+ 
++#ifndef container_of
++#define container_of(ptr, type, field) \
++       ((type *) ((char *)ptr - offsetof(type, field)))
++#endif
++
++
+ static uint32_t libversion = 0;
+ /* NICs info list for a provider */
+ struct fi_info* ofi_info_list = NULL;

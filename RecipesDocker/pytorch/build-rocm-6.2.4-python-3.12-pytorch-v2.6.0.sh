@@ -8,19 +8,21 @@ TORCHVISION_VERSION='0.21.0+rocm6.2.4'
 TORCHDATA_VERSION='0.9.0'
 TORCHTEXT_VERSION='0.18.0'
 TORCHAUDIO_VERSION='2.6.0+rocm6.2.4'
-VLLM_VERSION='v0.6.6+rocm'
+VLLM_VERSION='v0.7.3+rocm'
 CUPY_VERSION='13.2.0'
 MPI4PY_VERSION='3.1.6'
 RCCL_VERSION='612add2'
-TRITON_VERSION='35c6c7c62'
+TRITON_VERSION='35c6c7c62' # Check .ci/docker/ci_commit_pins/triton.txt in Pytorch
 MEGATRON_VERSION='fe353fd'
 
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.4  \
-  ../common/Dockerfile.miniconda \
+    ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.cupy \
   ../common/Dockerfile.mpi4py \
