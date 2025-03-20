@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+set -o pipefail
+
 if [ ! -f cpe-24.03.tar ] ; then
 
   ssh lumi 'bash -c -xe "cd / ; tar -cf - \
