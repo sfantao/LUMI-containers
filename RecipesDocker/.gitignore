@@ -5,3 +5,4 @@
 /*/.tmp-*
 .all-test-files
 /build-singularity-images.sh
+/generate-workflow-deps.out
