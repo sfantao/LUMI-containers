@@ -4,86 +4,86 @@ on: [push]
 env:
   OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
 jobs:
-  OpenStack-Container-Check:
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: check modified files
-        id: check_files
-        run: |
-          set -e
-          set -o pipefail
-          if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
-            echo "::set-output name=run_job::true"
-          else
-            echo "::set-output name=run_job::false"
-          fi
-  OpenStack-Container:
-    needs: OpenStack-Container-Check
-    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Build openstack image
-        run: |
-          docker pull $OPENSTACK_IMAGE_NAME || true
-          docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
-      - name: Push image
-        run: docker push $OPENSTACK_IMAGE_NAME
-  Start-Runner:
-    needs: OpenStack-Container
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: ubuntu-latest
-    permissions: write-all
-    container:
-      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
-      env:
-        OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
-        OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
-        OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
-        OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
-        OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
-        OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
-        OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
-        OS_MY_FLAVOUR: "hpc.5.64core"
-        OS_MY_IMAGE: "828d8dde-6ed9-40cc-8fb6-9546a09a03e0"
-    steps:
-      - name: Remove old instance if exists
-        run: openstack server delete --wait production_containers_workflow || true
-      - name: Create instance
-        run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
-      - name: Assign server public IP
-        run: openstack server add floating ip production_containers_workflow ${{ secrets.CPOUTA_INSTANCE_IP }}
-      - name: Assign security group
-        run: |
-          set -e
-          set -o pipefail
-          openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
-      - name: Assign volume
-        run: openstack server add volume production_containers_workflow test_containers_workflow_vol
-# Find a good way to check if the runner is on; maybe use SSH with nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22
-      - name: Check runner is ready
-        run: |
-          sleep 10
-          # now=$(date +%s)
-          # timeout=$((now + 60))
-          # while [ $now -lt $timeout ] ; do
-          #   openstack server show production_containers_workflow
-          #   now=$(date +%s)
-          # done
+#   OpenStack-Container-Check:
+#     outputs:
+#       run_job: ${{ steps.check_files.outputs.run_job }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 2
+#       - name: check modified files
+#         id: check_files
+#         run: |
+#           set -e
+#           set -o pipefail
+#           if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
+#             echo "::set-output name=run_job::true"
+#           else
+#             echo "::set-output name=run_job::false"
+#           fi
+#   OpenStack-Container:
+#     needs: OpenStack-Container-Check
+#     if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Log in to registry
+#         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+#       - name: Build openstack image
+#         run: |
+#           docker pull $OPENSTACK_IMAGE_NAME || true
+#           docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
+#       - name: Push image
+#         run: docker push $OPENSTACK_IMAGE_NAME
+#   Start-Runner:
+#     needs: OpenStack-Container
+#     if: ${{ ! failure() && ! cancelled() }}
+#     runs-on: ubuntu-latest
+#     permissions: write-all
+#     container:
+#       image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.github_token }}
+#       env:
+#         OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
+#         OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
+#         OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
+#         OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
+#         OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
+#         OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
+#         OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+#         OS_MY_FLAVOUR: "hpc.5.64core"
+#         OS_MY_IMAGE: "828d8dde-6ed9-40cc-8fb6-9546a09a03e0"
+#     steps:
+#       - name: Remove old instance if exists
+#         run: openstack server delete --wait production_containers_workflow || true
+#       - name: Create instance
+#         run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
+#       - name: Assign server public IP
+#         run: openstack server add floating ip production_containers_workflow ${{ secrets.CPOUTA_INSTANCE_IP }}
+#       - name: Assign security group
+#         run: |
+#           set -e
+#           set -o pipefail
+#           openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
+#       - name: Assign volume
+#         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
+# # Find a good way to check if the runner is on; maybe use SSH with nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22
+#       - name: Check runner is ready
+#         run: |
+#           sleep 10
+#           # now=$(date +%s)
+#           # timeout=$((now + 60))
+#           # while [ $now -lt $timeout ] ; do
+#           #   openstack server show production_containers_workflow
+#           #   now=$(date +%s)
+#           # done
       
   Build-Container:
     needs: Start-Runner
