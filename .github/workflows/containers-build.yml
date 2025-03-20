@@ -105,13 +105,13 @@ jobs:
           ./cpe-24.03.sh
           docker build -t h .
         working-directory: ${{ github.workspace }}/RecipesDocker/helper-files
+      - name: Check out repository code
+        uses: actions/checkout@v4
   rocm-build-rocm-asan-6_2_3:
     needs: Prepare-Build-Containers
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-asan-6.2.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-asan-6_2_2:
@@ -119,8 +119,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-asan-6.2.2.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_2_0:
@@ -128,8 +126,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.2.0.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_2_4:
@@ -137,8 +133,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.2.4.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_1_3:
@@ -146,8 +140,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.1.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_0_3:
@@ -155,8 +147,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.0.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_2_1:
@@ -164,8 +154,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.2.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_2_2:
@@ -173,8 +161,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.2.2.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-6_2_3:
@@ -182,8 +168,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-6.2.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-5_7_3:
@@ -191,8 +175,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-5.7.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-asan-6_2_4:
@@ -200,8 +182,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-asan-6.2.4.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   rocm-build-rocm-asan-6_1_3:
@@ -209,8 +189,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./rocm/build-rocm-asan-6.1.3.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
@@ -218,8 +196,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./mpi4py/build-rocm-6.2.4-python-3.12-mpi4py-3.1.6.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   tensorflow-build-rocm-6_2_3-python-3_10-tensorflow-2_16_2-horovod-0_28_1:
@@ -227,8 +203,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./tensorflow/build-rocm-6.2.3-python-3.10-tensorflow-2.16.2-horovod-0.28.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   alphafold-build-rocm-6_2_4-python-3_10-alphafold-f251de6:
@@ -236,8 +210,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./alphafold/build-rocm-6.2.4-python-3.10-alphafold-f251de6.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_1_3-python-3_12-pytorch-v2_4_1:
@@ -245,8 +217,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.1.3-python-3.12-pytorch-v2.4.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_0-python-3_12-pytorch-20240801-vllm-c7a3a47:
@@ -254,8 +224,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.0-python-3.12-pytorch-20240801-vllm-c7a3a47.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_5_1:
@@ -263,8 +231,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.4-python-3.12-pytorch-v2.5.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_3-python-3_12-pytorch-v2_5_1:
@@ -272,8 +238,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.3-python-3.12-pytorch-v2.5.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_0_3-python-3_12-pytorch-v2_3_1:
@@ -281,8 +245,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.0.3-python-3.12-pytorch-v2.3.1.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_1-python-3_12-pytorch-20240918-vllm-4075b35:
@@ -290,8 +252,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.1-python-3.12-pytorch-20240918-vllm-4075b35.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-5_7_3-python-3_12-pytorch-v2_2_2:
@@ -299,8 +259,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-5.7.3-python-3.12-pytorch-v2.2.2.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_6_0:
@@ -308,8 +266,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.4-python-3.12-pytorch-v2.6.0.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0:
@@ -317,8 +273,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.0-python-3.10-pytorch-v2.3.0.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   jax-build-rocm-6_2_4-python-3_12-jax-0_4_35:
@@ -326,8 +280,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./jax/build-rocm-6.2.4-python-3.12-jax-0.4.35.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   jax-build-rocm-6_2_0-python-3_12-jax-0_4_28:
@@ -335,8 +287,6 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./jax/build-rocm-6.2.0-python-3.12-jax-0.4.28.done 1
         working-directory: ${{ github.workspace }}/RecipesDocker
   Transfer-Containers:

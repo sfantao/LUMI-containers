@@ -27,8 +27,6 @@ for f in \
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
       - run: ./lumi-containers-build.sh ./$d/$b.done 1
         working-directory: \${{ github.workspace }}/RecipesDocker
 EOF
