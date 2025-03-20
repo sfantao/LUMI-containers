@@ -79,11 +79,7 @@ jobs:
           now=$(date +%s)
           timeout=$((now + 60))
           while [ $now -lt $timeout ] ; do
-            if nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22  > /dev/null ; then
-              exit 0
-            fi
-            sleep 5
-            now=$(date +%s)
+            openstack server show production_containers_workflow
           done
       
   Build-Container:
