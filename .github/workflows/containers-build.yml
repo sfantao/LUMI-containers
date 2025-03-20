@@ -74,13 +74,16 @@ jobs:
           openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
       - name: Assign volume
         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
+# Find a good way to check if the runner is on; maybe use SSH with nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22
       - name: Check runner is ready
         run: |
-          now=$(date +%s)
-          timeout=$((now + 60))
-          while [ $now -lt $timeout ] ; do
-            openstack server show production_containers_workflow
-          done
+          sleep 10
+          # now=$(date +%s)
+          # timeout=$((now + 60))
+          # while [ $now -lt $timeout ] ; do
+          #   openstack server show production_containers_workflow
+          #   now=$(date +%s)
+          # done
       
   Build-Container:
     needs: Start-Runner
