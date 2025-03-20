@@ -3,6 +3,7 @@ run-name: ${{ github.actor }} is running LUMI container build workflow
 on: [push]
 env:
   OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+  SKIP_HELPER_FILES: "YES"
 jobs:
 #   OpenStack-Container-Check:
 #     outputs:
@@ -97,7 +98,12 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Capture Cray Environment
-        run: PERSIST_CPE_FOLDER=/media/podman-storage/work/ongoing ./cpe-24.03.sh
+        run: |
+          mkdir -p /media/podman-storage/work/ongoing/helper-files
+          cp -rf * /media/podman-storage/work/ongoing/helper-files
+          cd /media/podman-storage/work/ongoing/helper-files
+          ./cpe-24.03.sh
+          docker build -t h .
         working-directory: ${{ github.workspace }}/RecipesDocker/helper-files
   rocm-build-rocm-asan-6_2_3:
     needs: Prepare-Build-Containers

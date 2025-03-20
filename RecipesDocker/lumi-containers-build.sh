@@ -21,7 +21,9 @@ export DOCKERBUILD="docker build \
 #
 # Build helper file container
 #
-(cd helper-files ; docker build -t h .)
+if [ ! -z ${SKIP_HELPER_FILES} ] ; then
+  (cd ./helper-files ; docker build -t h .)
+fi
 
 #
 # Build recipes
