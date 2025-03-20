@@ -99,7 +99,7 @@ jobs:
       - name: Capture Cray Environment
         run: PERSIST_CPE_FOLDER=/media/podman-storage/work/ongoing ./cpe-24.03.sh
         working-directory: ${{ github.workspace }}/RecipesDocker/helper-files
-    mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
+  mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
     needs: rocm-build-rocm-6.2.4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
