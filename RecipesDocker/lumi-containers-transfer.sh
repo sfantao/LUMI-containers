@@ -59,6 +59,8 @@ cd $LUMI_TEST_FOLDER
 
 EOF
 
+target=$1
+
 if [[ "$files" == '' ]] ; then
   if [[ "$target" == "all" ]] ; then
     files=$(ls -1 */build-*.done)

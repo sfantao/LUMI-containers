@@ -1,4 +1,4 @@
-ARG AWS_PLUGIN_VERSION 17d41cb
+ARG AWS_PLUGIN_VERSION=17d41cb
 
 RUN --mount=type=bind,from=h,source=/,dst=/h \
   set -eux ; \
@@ -20,7 +20,7 @@ RUN --mount=type=bind,from=h,source=/,dst=/h \
   mv src/.libs/librccl-net.so* /opt/aws-ofi-rccl ; \
   rm -rf /opt/mybuild ; \
   $REMOVE_CRAY_DEPS
-  
+
 #
 # Add relevant libs to execution environment
 #

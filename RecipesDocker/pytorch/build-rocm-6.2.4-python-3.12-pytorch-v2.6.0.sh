@@ -18,7 +18,7 @@ MEGATRON_VERSION='fe353fd'
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.4  \
-    ../common/Dockerfile.rccl \
+  ../common/Dockerfile.rccl \
   ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \

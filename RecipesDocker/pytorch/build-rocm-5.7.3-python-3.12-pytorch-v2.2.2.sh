@@ -14,11 +14,14 @@ TRITON_VERSION=2.2.0
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-5.7.3  \
-  ../common/Dockerfile.miniconda \
+  ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.no-torch-libstdc++ \
+  ../common/Dockerfile.rccl-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

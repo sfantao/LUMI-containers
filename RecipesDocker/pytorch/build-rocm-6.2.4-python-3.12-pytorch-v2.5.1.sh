@@ -18,9 +18,11 @@ MEGATRON_VERSION='fe353fd'
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.4  \
-  ../common/Dockerfile.miniconda \
+  ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.cupy \
   ../common/Dockerfile.mpi4py \

@@ -7,12 +7,15 @@ JAX_VERSION='0.4.35'
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.4  \
-  ../common/Dockerfile.miniconda \
+  ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.jax \
   ../common/Dockerfile.no-torch-libstdc++ \
+  ../common/Dockerfile.rccl-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

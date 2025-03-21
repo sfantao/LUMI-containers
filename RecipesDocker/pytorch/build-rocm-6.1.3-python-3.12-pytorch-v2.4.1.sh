@@ -15,14 +15,17 @@ MPI4PY_VERSION='3.1.6'
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.1.3  \
-  ../common/Dockerfile.miniconda \
+  ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.cupy \
   ../common/Dockerfile.mpi4py \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.no-torch-rocm \
+  ../common/Dockerfile.rccl-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

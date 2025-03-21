@@ -9,6 +9,7 @@ cat \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
   $DOCKERFILE \
+  ../common/Dockerfile.rccl-env \
 > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

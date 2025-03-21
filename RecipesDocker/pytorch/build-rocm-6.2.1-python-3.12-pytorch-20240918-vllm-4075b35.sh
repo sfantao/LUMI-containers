@@ -15,11 +15,14 @@ VLLM_VERSION="4075b35"
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.1  \
-  ../common/Dockerfile.miniconda \
+  ../common/Dockerfile.rccl \
+  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
+  ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.no-torch-libstdc++ \
+  ../common/Dockerfile.rccl-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \
