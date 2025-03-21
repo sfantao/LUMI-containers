@@ -35,14 +35,14 @@ for f in \
     runs-on: cpouta-trf
     steps:
       - run: TARGET_FILE ./$d/$b.done ./lumi-containers-transfer.sh
-        working-directory: \${{ github.workspace }}/RecipesDocker
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   test-$tag:
     needs: trf-$tag
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-test
     steps:
       - run: ssh lumi ls
-        working-directory: \${{ github.workspace }}/RecipesDocker
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 EOF
 done
 
