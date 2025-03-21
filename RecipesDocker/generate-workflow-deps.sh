@@ -34,7 +34,7 @@ for f in \
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-trf
     steps:
-      - run: TARGET_FILE ./$d/$b.done ./lumi-containers-transfer.sh
+      - run: TARGET_FILE="./$d/$b.done" ./lumi-containers-transfer.sh
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   test-$tag:
     needs: trf-$tag
