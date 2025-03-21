@@ -29,22 +29,36 @@ for f in \
     steps:
       - run: ./lumi-containers-build.sh ./$d/$b.done 1
         working-directory: \${{ github.workspace }}/RecipesDocker
+  trf-$tag:
+    needs: $tag
+    if: \${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-trf
+    steps:
+      - run: TARGET_FILE ./$d/$b.done ./lumi-containers-transfer.sh
+        working-directory: \${{ github.workspace }}/RecipesDocker
+  test-$tag:
+    needs: trf-$tag
+    if: \${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-test
+    steps:
+      - run: ssh lumi ls
+        working-directory: \${{ github.workspace }}/RecipesDocker
 EOF
 done
 
-cat >> generate-workflow-deps.out << EOF
-  Transfer-Containers:
-    needs:
-EOF
-for i in $all ; do
-    echo "      - $i" >> generate-workflow-deps.out
-done
-cat >> generate-workflow-deps.out << EOF
-    if: \${{ ! failure() && ! cancelled() }}
-    runs-on: cpouta
-    steps:
-      - name: Transfer containers to LUMI
-        run: ./lumi-containers-transfer.sh 
-        working-directory: \${{ github.workspace }}/RecipesDocker
-EOF
+# cat >> generate-workflow-deps.out << EOF
+#   Transfer-Containers:
+#     needs:
+# EOF
+# for i in $all ; do
+#     echo "      - $i" >> generate-workflow-deps.out
+# done
+# cat >> generate-workflow-deps.out << EOF
+#     if: \${{ ! failure() && ! cancelled() }}
+#     runs-on: cpouta
+#     steps:
+#       - name: Transfer containers to LUMI
+#         run: ./lumi-containers-transfer.sh 
+#         working-directory: \${{ github.workspace }}/RecipesDocker
+# EOF
 

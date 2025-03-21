@@ -60,6 +60,7 @@ cd $LUMI_TEST_FOLDER
 EOF
 
 target=$1
+files="${TARGET_FILE}"
 
 if [[ "$files" == '' ]] ; then
   if [[ "$target" == "all" ]] ; then
