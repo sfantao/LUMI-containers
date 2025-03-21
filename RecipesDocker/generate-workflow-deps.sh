@@ -28,7 +28,7 @@ for f in \
     runs-on: cpouta
     steps:
       - run: ./lumi-containers-build.sh ./$d/$b.done 1
-        working-directory: \${{ github.workspace }}/RecipesDocker
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   trf-$tag:
     needs: $tag
     if: \${{ ! failure() && ! cancelled() }}

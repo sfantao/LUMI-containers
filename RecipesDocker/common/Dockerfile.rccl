@@ -24,3 +24,9 @@ RUN $WITH_CONDA ; set -eux ; \
 RUN set -eux ; \ 
   rm -rf $ROCM_PATH/lib/librccl.so* ; \
   ln -s /opt/rccl/lib/librccl.so* $ROCM_PATH/lib
+
+RUN set -eux ; \ 
+  cd $ROCM_PATH ; \
+  find -iname '*.cmake' -o -iname '*.txt' | xargs grep -i librccl.so ; \
+  find -iname '*.cmake' -o -iname '*.txt' | xargs sed -E -i 's#librccl.[0-9,a-z,\.]+#librccl.so.1.0#g' ; \
+  find -iname '*.cmake' -o -iname '*.txt' | xargs grep -i librccl.so
