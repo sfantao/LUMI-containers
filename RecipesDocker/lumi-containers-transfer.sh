@@ -82,7 +82,8 @@ for i in $files ; do
     filename=$(basename $i)
     test_filename=${filename%.done}.test
     local_tag=$line
-    remote_tag="uan03:5000/$local_tag"
+    remote_tag="127.0.0.1:5000/$local_tag"
+    lumi_tag="uan03:5000/$local_tag"
 
     #
     # Remote names
@@ -162,7 +163,7 @@ EOF
       singularity build \\
         --fix-perms \\
         $sif \\
-        docker://${remote_tag}
+        docker://${lumi_tag}
     fi
     chmod +x build-singularity-images.sh
 EOF
