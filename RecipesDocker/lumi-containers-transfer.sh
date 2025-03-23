@@ -2,7 +2,12 @@
 
 # Upstream and test images.
 #
-LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area"
+if [ -z $LUMI_TIMESTAMP ] ; then
+  LUMI_TIMESTAMP="time-$(date +'%s')"
+fi
+
+LUMI_TESTED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/tested-containers"
+LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/$LUMI_TIMESTAMP"
 
 Nodes=4
 echo "test.sbatch" > .all-test-files
@@ -14,7 +19,7 @@ cat > test.sbatch << EOF
 #SBATCH --exclusive 
 #SBATCH -N $Nodes 
 #SBATCH --gpus $((Nodes*8)) 
-#SBATCH -t 2:00:00 
+#SBATCH -t 0:30:00 
 #SBATCH --mem 0
 #SBATCH -o test.out
 #SBATCH -e test.err
@@ -22,8 +27,6 @@ cat > test.sbatch << EOF
 cd $LUMI_TEST_FOLDER/runtests
 
 set -o pipefail
-export NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hsn3
-export NCCL_NET_GDR_LEVEL=PHB
 
 #
 # Execute examples
@@ -53,6 +56,7 @@ cat > build-singularity-images.sh << EOF
 
 mkdir -p /tmp/singularity-images
 export SINGULARITY_TMPDIR=/tmp/singularity-images
+export SINGULARITY_NOHTTPS=true
 
 mkdir -p $LUMI_TEST_FOLDER/lumi
 cd $LUMI_TEST_FOLDER
@@ -78,7 +82,7 @@ for i in $files ; do
     filename=$(basename $i)
     test_filename=${filename%.done}.test
     local_tag=$line
-    remote_tag="127.0.0.1:5000/$local_tag"
+    remote_tag="uan03:5000/$local_tag"
 
     #
     # Remote names
@@ -115,6 +119,19 @@ for i in $files ; do
       echo "-------------------"
       echo "Test success!!! --> $local_tag (\$sif)"
       echo "-------------------"
+
+      if [[ "\$sif" == "$LUMI_TESTED_CONTAINERS_FOLDER"* ]] ; then
+        echo "-------------------"
+        echo "No need to post image - existed before. --> \$sif"
+        echo "-------------------"
+      else
+        echo "-------------------"
+        echo "Posting singularity image --> \$sif"
+        echo "-------------------"
+        mkdir -p $LUMI_TESTED_CONTAINERS_FOLDER/lumi
+        rm -rf $LUMI_TESTED_CONTAINERS_FOLDER/${fname}-dockerhash-*.sif
+        mv \$sif $LUMI_TESTED_CONTAINERS_FOLDER/lumi
+      fi
     else
       echo "###################"
       echo "###################"
@@ -134,7 +151,10 @@ EOF
 
     # Build singularity images if it does exist or if the image is broken.
     if [ -f $sif ] && $sif ls ; then
-      echo "SIF image \$(realpath $sif) already exists!"
+      echo "SIF image \$(realpath $sif) already exists in this test!"
+    elif [ -f $LUMI_TESTED_CONTAINERS_FOLDER/$sif ] && $LUMI_TESTED_CONTAINERS_FOLDER/$sif ls ; then 
+      echo "SIF image \$(realpath $LUMI_TESTED_CONTAINERS_FOLDER/$sif) already exists - reusing!"
+      ln -s $LUMI_TESTED_CONTAINERS_FOLDER/$sif $sif
     else
       echo Building "SIF image \$(realpath $sif)..."
       rm -rf $fname-*.sif
@@ -144,16 +164,17 @@ EOF
         $sif \\
         docker://${remote_tag}
     fi
+    chmod +x build-singularity-images.sh
 EOF
 
   done < $i
 done
 
-#rm -rf test.tar 
-#tar -cf test.tar $(cat .all-test-files)
-#ssh lumi "bash -c 'rm -rf $LUMI_TEST_FOLDER/runtests ; mkdir $LUMI_TEST_FOLDER/runtests'"
-#scp test.tar lumi:$LUMI_TEST_FOLDER/runtests
-#ssh lumi "bash -c 'cd $LUMI_TEST_FOLDER/runtests ; tar -xf test.tar'"
+rm -rf test.tar 
+tar -cf test.tar $(cat .all-test-files)
+ssh lumi "bash -c 'rm -rf $LUMI_TEST_FOLDER/runtests ; mkdir -p $LUMI_TEST_FOLDER/runtests'"
+scp test.tar lumi:$LUMI_TEST_FOLDER/runtests
+ssh lumi "bash -c 'cd $LUMI_TEST_FOLDER/runtests ; tar -xf test.tar'"
 
 
 # #ssh lumi "bash -c 'set -ex ; cd $LUMI_TEST_FOLDER; rm -rf runtests ; mkdir runtests ; cd runtests; tar -xf ../test.tar'"

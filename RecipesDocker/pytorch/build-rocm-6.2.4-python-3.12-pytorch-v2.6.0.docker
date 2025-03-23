@@ -109,10 +109,10 @@ RUN $WITH_CONDA; set -eux ; \
   true
 
 #
-# flash-attention - tested with 478ee66
+# flash-attention
 #
 RUN $WITH_CONDA; set -eux ; \
-  git clone --recursive https://github.com/Dao-AILab/flash-attention /opt/mybuild ; \
+  git clone -b v2.7.3 --recursive https://github.com/Dao-AILab/flash-attention /opt/mybuild ; \
   cd /opt/mybuild ; \
   cp -rf benchmarks /opt/wheels/flash_attn-benchmarks ; \
   \
@@ -212,7 +212,7 @@ RUN $WITH_CONDA; set -eux ; \
     /opt/wheels/vllm-*.whl
 
 #
-# Transformer engine - tested aa0de87
+# Transformer engine - tested e7a7f6d
 #
 RUN $WITH_CONDA; set -eux ; \
   export NVTE_FRAMEWORK=pytorch ; \
@@ -220,7 +220,7 @@ RUN $WITH_CONDA; set -eux ; \
   rm -rf /opt/mybuild ; \
   git clone --recursive https://github.com/ROCm/TransformerEngine.git /opt/mybuild ; \
   cd /opt/mybuild ; \
-  git checkout -b mydev aa0de87 ; \
+  git checkout -b mydev e7a7f6d ; \
   git submodule sync ; \
   git submodule update --init --recursive --jobs 0 ; \
   sed -i 's/-Werror//g' /opt/mybuild/3rdparty/aotriton/third_party/triton/CMakeLists.txt ; \

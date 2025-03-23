@@ -106,10 +106,10 @@ RUN $WITH_CONDA; set -eux ; \
   true
 
 #
-# flash-attention - tested with 478ee66
+# flash-attention
 #
 RUN $WITH_CONDA; set -eux ; \
-  git clone --recursive https://github.com/Dao-AILab/flash-attention /opt/mybuild ; \
+  git clone -b v2.7.3 --recursive https://github.com/Dao-AILab/flash-attention /opt/mybuild ; \
   cd /opt/mybuild ; \
   cp -rf benchmarks /opt/wheels/flash_attn-benchmarks ; \
   \
@@ -209,21 +209,23 @@ RUN $WITH_CONDA; set -eux ; \
     /opt/wheels/vllm-*.whl
 
 #
-# Transformer engine - tested 037d34e
+# Transformer engine - tested e7a7f6d
 #
 RUN $WITH_CONDA; set -eux ; \
   export NVTE_FRAMEWORK=pytorch ; \
   export NVTE_ROCM_ARCH=gfx90a ; \
   rm -rf /opt/mybuild ; \
   git clone --recursive https://github.com/ROCm/TransformerEngine.git /opt/mybuild ; \
-  sed -i 's/-Werror//g' /opt/mybuild/3rdparty/aotriton/third_party/triton/CMakeLists.txt ; \
   cd /opt/mybuild ; \
+  git checkout -b mydev e7a7f6d ; \
+  git submodule sync ; \
+  git submodule update --init --recursive --jobs 0 ; \
+  sed -i 's/-Werror//g' /opt/mybuild/3rdparty/aotriton/third_party/triton/CMakeLists.txt ; \
   CC=clang \
     CXX=clang++ \
     TORCH_DONT_CHECK_COMPILER_ABI=1 \
-    pip install --no-clean . ; \
-  cp $(find /tmp -iname 'transformer_engine-*.whl') /opt/wheels ; \
-  rm -rf /tmp/pip-* /opt/mybuild
+    pip wheel --no-deps --verbose -e . -w /opt/wheels ; \
+  rm -rf /opt/mybuild
 
 RUN $WITH_CONDA; set -eux ; \
   pip install \

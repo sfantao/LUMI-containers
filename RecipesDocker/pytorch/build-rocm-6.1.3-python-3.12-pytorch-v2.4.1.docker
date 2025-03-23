@@ -129,8 +129,11 @@ RUN $WITH_CONDA; set -eux ; \
 # xformers - tested with 7a04357
 #
 RUN $WITH_CONDA; set -eux ; \
-  git clone --recursive -b develop https://github.com/ROCm/xformers /opt/mybuild ; \
+  git clone --recursive https://github.com/ROCm/xformers /opt/mybuild ; \
   cd /opt/mybuild ; \
+  git checkout -b mydev 7a04357 ; \
+  git submodule sync ; \
+  git submodule update --init --recursive --jobs 0 ; \
   \
   rm -rf build ; \
   CC=gcc-12 \
