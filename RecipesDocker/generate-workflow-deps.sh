@@ -43,14 +43,14 @@ for f in \
     runs-on: cpouta-test
     steps:
       - name: build SIF image
-        run: 
+        run: |
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
               srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \\
               '"
       - name: issue SIF image testing
-        run: 
+        run: |
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
@@ -58,7 +58,7 @@ for f in \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
       - name: issue SIF image testing
-        run: 
+        run: |
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
