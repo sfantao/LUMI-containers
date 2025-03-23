@@ -23,7 +23,7 @@ for f in \
 
     cat >> generate-workflow-deps.out << EOF
   build-$tag:
-    needs: $dep
+    needs: build-$dep
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
