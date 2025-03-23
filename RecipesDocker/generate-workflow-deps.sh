@@ -34,14 +34,35 @@ for f in \
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-trf
     steps:
-      - run: TARGET_FILE="./$d/$b.done" ./lumi-containers-transfer.sh
+      - run: LUMI_TIMESTAMP="gh-\${{ github.run_id }}/$d-$b" TARGET_FILE="./$d/$b.done" ./lumi-containers-transfer.sh
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   test-$tag:
     needs: trf-$tag
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-test
     steps:
-      - run: ssh lumi ls
+      - name: build SIF image
+        run: 
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
+              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              '"
+      - name: issue SIF image testing
+        run: 
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
+              sbatch < test.sbatch \
+              '"
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: issue SIF image testing
+        run: 
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
+              sbatch < test.sbatch |& tee jobid.info \
+              '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 EOF
 done
