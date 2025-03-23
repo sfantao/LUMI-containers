@@ -165,8 +165,8 @@ EOF
         $sif \\
         docker://${lumi_tag}
     fi
-    chmod +x build-singularity-images.sh
 EOF
+  chmod +x build-singularity-images.sh
 
   done < $i
 done

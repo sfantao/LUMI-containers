@@ -114,8 +114,8 @@ jobs:
         run: |
           ssh lumi \
             "bash -ex -c '\
-              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/time-* -maxdepth 1 -mtime +7 | xargs rm -rf
-              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-* -maxdepth 1 -mtime +7 | xargs rm -rf
+              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'time-*' | xargs rm -rf
+              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'gh-*' | xargs rm -rf
               '"
   build-rocm-build-rocm-asan-6_2_3:
     needs: Prepare-Build-Containers
