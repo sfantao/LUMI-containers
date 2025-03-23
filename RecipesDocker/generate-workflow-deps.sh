@@ -19,11 +19,12 @@ for f in \
     rdep=$(echo $b | grep -Eo 'rocm-[0-9]+\.[0-9]+\.[0-9]+-')
     if [[ "$rdep" != "" ]] ; then
       dep=$(echo "rocm-build-${rdep%-}" | sed 's/\./_/g')
+      dep="build-"
     fi
 
     cat >> generate-workflow-deps.out << EOF
   build-$tag:
-    needs: build-$dep
+    needs: $dep
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
