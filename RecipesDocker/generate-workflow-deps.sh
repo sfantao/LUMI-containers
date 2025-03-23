@@ -22,7 +22,7 @@ for f in \
     fi
 
     cat >> generate-workflow-deps.out << EOF
-  $tag:
+  build-$tag:
     needs: $dep
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
@@ -30,7 +30,7 @@ for f in \
       - run: ./lumi-containers-build.sh ./$d/$b.done 1
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   trf-$tag:
-    needs: $tag
+    needs: build-$tag
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-trf
     steps:
@@ -43,43 +43,47 @@ for f in \
     steps:
       - name: build SIF image
         run: 
-          ssh lumi \
-            "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+          ssh lumi \\
+            "bash -ex -c '\\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
+              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \\
               '"
       - name: issue SIF image testing
         run: 
-          ssh lumi \
-            "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
-              sbatch < test.sbatch \
+          ssh lumi \\
+            "bash -ex -c '\\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
+              sbatch < test.sbatch \\
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
       - name: issue SIF image testing
         run: 
-          ssh lumi \
-            "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \
-              sbatch < test.sbatch |& tee jobid.info \
+          ssh lumi \\
+            "bash -ex -c '\\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
+              sbatch < test.sbatch |& tee jobid.info \\
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 EOF
 done
 
-# cat >> generate-workflow-deps.out << EOF
-#   Transfer-Containers:
-#     needs:
-# EOF
-# for i in $all ; do
-#     echo "      - $i" >> generate-workflow-deps.out
-# done
-# cat >> generate-workflow-deps.out << EOF
-#     if: \${{ ! failure() && ! cancelled() }}
-#     runs-on: cpouta
-#     steps:
-#       - name: Transfer containers to LUMI
-#         run: ./lumi-containers-transfer.sh 
-#         working-directory: \${{ github.workspace }}/RecipesDocker
-# EOF
+cat >> generate-workflow-deps.out << EOF
+  Verify:
+    needs:
+EOF
+for i in $all ; do
+    echo "      - test-$i" >> generate-workflow-deps.out
+done
+cat >> generate-workflow-deps.out << EOF
+    if: \${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta
+    steps:
+      - name: Verify tests
+        run: |
+          ssh lumi \\
+            "bash -ex -c '\\
+              ls /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/lumi \\
+              '"
+        working-directory: \${{ github.workspace }}/RecipesDocker
+EOF
 
