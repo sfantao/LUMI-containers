@@ -622,7 +622,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -664,7 +664,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-tensorflow-build-rocm-6_2_3-python-3_10-tensorflow-2_16_2-horovod-0_28_1:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -706,7 +706,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-alphafold-build-rocm-6_2_4-python-3_10-alphafold-f251de6:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -748,7 +748,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_1_3-python-3_12-pytorch-v2_4_1:
-    needs: build-
+    needs: build-rocm-build-rocm-6_1_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -790,7 +790,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_0-python-3_12-pytorch-20240801-vllm-c7a3a47:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_0
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -832,7 +832,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_5_1:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -874,7 +874,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_3-python-3_12-pytorch-v2_5_1:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -916,7 +916,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_0_3-python-3_12-pytorch-v2_3_1:
-    needs: build-
+    needs: build-rocm-build-rocm-6_0_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -958,7 +958,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_1-python-3_12-pytorch-20240918-vllm-4075b35:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_1
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1000,7 +1000,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-5_7_3-python-3_12-pytorch-v2_2_2:
-    needs: build-
+    needs: build-rocm-build-rocm-5_7_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1042,7 +1042,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_6_0:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1084,7 +1084,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_0
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1126,7 +1126,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-jax-build-rocm-6_2_4-python-3_12-jax-0_4_35:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1168,7 +1168,7 @@ jobs:
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-jax-build-rocm-6_2_0-python-3_12-jax-0_4_28:
-    needs: build-
+    needs: build-rocm-build-rocm-6_2_0
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
