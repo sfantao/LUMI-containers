@@ -178,7 +178,7 @@ EOF
       rm -rf $fname-*.sif
       
       srun -p standard-g -N 1 -n 1 -c 56 -t $SINGULARITY_BUILD_MAX_TIME \\
-        bash -ex -c 'mkdir -p $SINGULARITY_TMPDIR ; \
+        bash -ex -c 'mkdir -p \$SINGULARITY_TMPDIR ; \
                     singularity build \
                       --fix-perms \
                       $sif \
