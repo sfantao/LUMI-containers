@@ -54,14 +54,6 @@ for f in \
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
-              sbatch < test.sbatch \\
-              '"
-        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-      - name: issue SIF image testing
-        run: |
-          ssh lumi \\
-            "bash -ex -c '\\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
               sbatch < test.sbatch |& tee jobid.info \\
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
