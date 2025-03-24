@@ -9,6 +9,7 @@ fi
 LUMI_TESTED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/tested-containers"
 LUMI_FAILED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/failed-containers"
 LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/$LUMI_TIMESTAMP"
+SINGULARITY_BUILD_MAX_TIME="1:00:00"
 
 Nodes=4
 echo "test.sbatch" > .all-test-files
@@ -175,7 +176,8 @@ EOF
     else
       echo Building "SIF image \$(realpath $sif)..."
       rm -rf $fname-*.sif
-
+      
+      srun -p standard-g -N 1 -n 1 -c 56 -t $SINGULARITY_BUILD_MAX_TIME \\
       singularity build \\
         --fix-perms \\
         $sif \\

@@ -47,7 +47,7 @@ for f in \
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
-              srun -p standard-g -N 1 -n 1 -c 56 -t \$SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \\
+              ./build-singularity-images.sh \\
               '"
       - name: issue SIF image testing
         run: |
