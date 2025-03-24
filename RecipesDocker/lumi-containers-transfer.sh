@@ -123,7 +123,7 @@ for i in $files ; do
     ret=\$?
     set -e
     
-    if [ \$ref -eq 0 ] ; then
+    if [ \$ret -eq 0 ] ; then
       echo "-------------------"
       echo "Test success!!! --> $local_tag (\$sif)"
       echo "-------------------"
@@ -174,9 +174,11 @@ EOF
       echo "SIF image \$(realpath $sif) already exists in this test!"
     elif [ -f $LUMI_TESTED_CONTAINERS_FOLDER/$sif ] && $LUMI_TESTED_CONTAINERS_FOLDER/$sif ls ; then 
       echo "SIF image \$(realpath $LUMI_TESTED_CONTAINERS_FOLDER/$sif) already exists - reusing!"
+      rm -rf $sif
       ln -s $LUMI_TESTED_CONTAINERS_FOLDER/$sif $sif
     elif [ -f $LUMI_FAILED_CONTAINERS_FOLDER/$sif ] && $LUMI_FAILED_CONTAINERS_FOLDER/$sif ls ; then 
       echo "SIF image \$(realpath $LUMI_FAILED_CONTAINERS_FOLDER/$sif) already exists - reusing!"
+      rm -rf $sif
       ln -s $LUMI_FAILED_CONTAINERS_FOLDER/$sif $sif
     else
       echo Building "SIF image \$(realpath $sif)..."
