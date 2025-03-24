@@ -178,10 +178,11 @@ EOF
       rm -rf $fname-*.sif
       
       srun -p standard-g -N 1 -n 1 -c 56 -t $SINGULARITY_BUILD_MAX_TIME \\
-      singularity build \\
-        --fix-perms \\
-        $sif \\
-        docker://${lumi_tag}
+        bash -ex -c "mkdir -p $SINGULARITY_TMPDIR ; \
+                    singularity build \
+                      --fix-perms \
+                      $sif \
+                      docker://${lumi_tag}"
     fi
 EOF
   chmod +x build-singularity-images.sh
