@@ -7,6 +7,7 @@ if [ -z $LUMI_TIMESTAMP ] ; then
 fi
 
 LUMI_TESTED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/tested-containers"
+LUMI_FAILED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/failed-containers"
 LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/$LUMI_TIMESTAMP"
 
 Nodes=4
@@ -141,6 +142,18 @@ for i in $files ; do
       echo "###################"
       echo "###################"
       echo "###################"
+      if [[ "\$sif" == "$LUMI_FAILED_CONTAINERS_FOLDER"* ]] ; then
+        echo "-------------------"
+        echo "Posting skipped - failed in the past --> \$sif"
+        echo "-------------------"
+      else
+        echo "-------------------"
+        echo "Posting failed singularity image --> \$sif"
+        echo "-------------------"
+        mkdir -p $LUMI_FAILED_CONTAINERS_FOLDER/lumi
+        rm -rf $LUMI_FAILED_CONTAINERS_FOLDER/${fname}-dockerhash-*.sif
+        mv \$sif $LUMI_FAILED_CONTAINERS_FOLDER/lumi
+      fi
     fi
     \cd -
 EOF
@@ -156,6 +169,9 @@ EOF
     elif [ -f $LUMI_TESTED_CONTAINERS_FOLDER/$sif ] && $LUMI_TESTED_CONTAINERS_FOLDER/$sif ls ; then 
       echo "SIF image \$(realpath $LUMI_TESTED_CONTAINERS_FOLDER/$sif) already exists - reusing!"
       ln -s $LUMI_TESTED_CONTAINERS_FOLDER/$sif $sif
+    elif [ -f $LUMI_FAILED_CONTAINERS_FOLDER/$sif ] && $LUMI_FAILED_CONTAINERS_FOLDER/$sif ls ; then 
+      echo "SIF image \$(realpath $LUMI_FAILED_CONTAINERS_FOLDER/$sif) already exists - reusing!"
+      ln -s $LUMI_FAILED_CONTAINERS_FOLDER/$sif $sif
     else
       echo Building "SIF image \$(realpath $sif)..."
       rm -rf $fname-*.sif

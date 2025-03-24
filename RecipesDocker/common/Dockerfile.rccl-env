@@ -4,9 +4,9 @@ ENV NCCL_NET_GDR_LEVEL=PHB
 #
 # Check https://support.hpe.com/hpesc/public/docDisplay?docId=dp00004854en_us&docLocale=en_US for details
 #
-ENV FI_MR_CACHE_MONITOR=userfaultfd
-ENV FI_CXI_DEFAULT_CQ_SIZE=131072
-ENV FI_CXI_RX_MATCH_MODE=software
-ENV FI_CXI_RDZV_PROTO=alt_read
-# Increase for larger jobs
-ENV FI_CXI_REQ_BUF_SIZE=256
+# ENV FI_MR_CACHE_MONITOR=userfaultfd
+# ENV FI_CXI_DEFAULT_CQ_SIZE=131072
+# ENV FI_CXI_RX_MATCH_MODE=software
+# ENV FI_CXI_RDZV_PROTO=alt_read
+# # Increase for larger jobs
+# ENV FI_CXI_REQ_BUF_SIZE=256

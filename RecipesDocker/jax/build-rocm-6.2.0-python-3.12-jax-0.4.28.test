@@ -12,8 +12,6 @@ cd /myrun
 \$WITH_CONDA
 set -x
 
-export NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hsn3
-
 # -b minbytes
 # -e maxbytes
 # -f increment factor
@@ -71,8 +69,6 @@ cat > run.sh << EOF
 cd /myrun
 \$WITH_CONDA
 set -x
-
-  export NCCL_SOCKET_IFNAME=hsn0,hsn1,hsn2,hsn3
 
   if [[ \$ROCM_RELEASE != "6.2."* ]] ; then
     export MIOPEN_USER_DB_PATH="/tmp/$(whoami)-miopen-cache-\$SLURM_NODEID"

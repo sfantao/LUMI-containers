@@ -4,6 +4,7 @@ on: [push]
 env:
   OPENSTACK_IMAGE_NAME: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
   SKIP_HELPER_FILES: "YES"
+  SINGULARITY_BUILD_MAX_TIME: "1:00:00"
 concurrency:
   group: cpouta-single-workflow
   cancel-in-progress: true
@@ -141,7 +142,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -183,7 +184,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.2/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -225,7 +226,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.0/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -267,7 +268,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.4/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -309,7 +310,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.1.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -351,7 +352,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.0.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -393,7 +394,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -435,7 +436,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.2/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -477,7 +478,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -519,7 +520,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-5.7.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -561,7 +562,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.4/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -603,7 +604,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.1.3/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -645,7 +646,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -687,7 +688,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/tensorflow-build-rocm-6.2.3-python-3.10-tensorflow-2.16.2-horovod-0.28.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -729,7 +730,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/alphafold-build-rocm-6.2.4-python-3.10-alphafold-f251de6/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -771,7 +772,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.1.3-python-3.12-pytorch-v2.4.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -813,7 +814,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.0-python-3.12-pytorch-20240801-vllm-c7a3a47/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -855,7 +856,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.5.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -897,7 +898,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.3-python-3.12-pytorch-v2.5.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -939,7 +940,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.0.3-python-3.12-pytorch-v2.3.1/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -981,7 +982,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.1-python-3.12-pytorch-20240918-vllm-4075b35/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -1023,7 +1024,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-5.7.3-python-3.12-pytorch-v2.2.2/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -1065,7 +1066,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.6.0/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -1107,7 +1108,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.0-python-3.10-pytorch-v2.3.0/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -1149,7 +1150,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-0.4.35/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
@@ -1191,7 +1192,7 @@ jobs:
           ssh lumi \
             "bash -ex -c '\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.0-python-3.12-jax-0.4.28/runtests && \
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \
+              srun -p dev-g -c 56 -t $SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |

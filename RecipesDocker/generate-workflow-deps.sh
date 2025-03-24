@@ -47,7 +47,7 @@ for f in \
           ssh lumi \\
             "bash -ex -c '\\
               cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$d-$b/runtests && \\
-              srun -p dev-g -c 56 -t 30:00 ./build-singularity-images.sh \\
+              srun -p dev-g -c 56 -t 1:00:00 \$SINGULARITY_BUILD_MAX_TIME ./build-singularity-images.sh \\
               '"
       - name: issue SIF image testing
         run: |
@@ -83,7 +83,7 @@ cat >> generate-workflow-deps.out << EOF
         run: |
           ssh lumi \\
             "bash -ex -c '\\
-              ls /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/lumi \\
+              ls /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }} \\
               '"
         working-directory: \${{ github.workspace }}/RecipesDocker
 EOF
