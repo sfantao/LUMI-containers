@@ -117,8 +117,13 @@ for i in $files ; do
     chmod +x \$test
 
     cd $project
+    
+    set +e
     \$test \$sif |& tee $test_filename.log
-    if [ \$? -eq 0 ] ; then
+    ret=\$?
+    set -e
+    
+    if [ \$ref -eq 0 ] ; then
       echo "-------------------"
       echo "Test success!!! --> $local_tag (\$sif)"
       echo "-------------------"
@@ -156,7 +161,7 @@ for i in $files ; do
         mv \$sif $LUMI_FAILED_CONTAINERS_FOLDER/lumi
       fi
     fi
-    \cd -
+    cd -
 EOF
 
     #
