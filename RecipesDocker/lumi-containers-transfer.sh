@@ -188,7 +188,7 @@ EOF
 done
 
 rm -rf test.tar 
-tar -cf test.tar $(cat .all-test-files)
+tar -cfh test.tar $(cat .all-test-files)
 ssh lumi "bash -c 'rm -rf $LUMI_TEST_FOLDER/runtests ; mkdir -p $LUMI_TEST_FOLDER/runtests'"
 scp test.tar lumi:$LUMI_TEST_FOLDER/runtests
 ssh lumi "bash -c 'cd $LUMI_TEST_FOLDER/runtests ; tar -xf test.tar'"
