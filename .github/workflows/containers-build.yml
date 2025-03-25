@@ -114,8 +114,14 @@ jobs:
         run: |
           ssh lumi \
             "bash -ex -c '\
-              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'time-*' | xargs rm -rf
-              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'gh-*' | xargs rm -rf
+              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'time-*' | xargs rm -rf ; \
+              find /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area -maxdepth 1 -mtime +7 -name 'gh-*' | xargs rm -rf ; \
+              '"
+      - name: Remove old test folders
+        run: |
+          ssh lumi \
+            "bash -ex -c '\
+              scancel -n lumi-container-test ; \
               '"
   build-rocm-build-rocm-asan-6_2_3:
     needs: Prepare-Build-Containers
@@ -1032,12 +1038,143 @@ jobs:
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Verify tests
+      - name: Wait for tests to complete.
         run: |
-          ssh lumi \
-            "bash -ex -c '\
-              ls /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }} \
-              '"
+          while [ $(ssh lumi 'bash -c "squeue --me -n lumi-container-test | wc -l"') -ne 1 ] ; do
+            echo -n "."
+            sleep 10
+          done
+          echo "Tests completed."
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-asan-6_2_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-asan-6_2_2
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.2/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_2_0
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.0/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_2_4
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.4/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_1_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.1.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_0_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.0.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_2_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_2_2
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.2/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-6_2_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-6.2.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-5_7_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-5.7.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-asan-6_2_4
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.2.4/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify rocm-build-rocm-asan-6_1_3
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.1.3/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify tensorflow-build-rocm-6_2_3-python-3_10-tensorflow-2_16_2-horovod-0_28_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/tensorflow-build-rocm-6.2.3-python-3.10-tensorflow-2.16.2-horovod-0.28.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify alphafold-build-rocm-6_2_4-python-3_10-alphafold-f251de6
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/alphafold-build-rocm-6.2.4-python-3.10-alphafold-f251de6/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_1_3-python-3_12-pytorch-v2_4_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.1.3-python-3.12-pytorch-v2.4.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_0-python-3_12-pytorch-20240801-vllm-c7a3a47
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.0-python-3.12-pytorch-20240801-vllm-c7a3a47/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_5_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.5.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_3-python-3_12-pytorch-v2_5_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.3-python-3.12-pytorch-v2.5.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_0_3-python-3_12-pytorch-v2_3_1
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.0.3-python-3.12-pytorch-v2.3.1/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_1-python-3_12-pytorch-20240918-vllm-4075b35
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.1-python-3.12-pytorch-20240918-vllm-4075b35/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-5_7_3-python-3_12-pytorch-v2_2_2
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-5.7.3-python-3.12-pytorch-v2.2.2/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_6_0
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.6.0/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.0-python-3.10-pytorch-v2.3.0/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify jax-build-rocm-6_2_4-python-3_12-jax-0_4_35
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-0.4.35/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify jax-build-rocm-6_2_0-python-3_12-jax-0_4_28
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.0-python-3.12-jax-0.4.28/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 
   # Stop-Runner:

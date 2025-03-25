@@ -3,6 +3,7 @@
 rm -rf generate-workflow-deps.out
 
 all=''
+allf=''
 
 # We need to process rocm entries first.
 for f in \
@@ -15,6 +16,7 @@ for f in \
     dep="Prepare-Build-Containers"
     tag=$(echo $d-$b | sed 's/\./_/g')
     all="$all $tag"
+    allf="$allf $d-$b"
 
     rdep=$(echo $b | grep -Eo 'rocm-[0-9]+\.[0-9]+\.[0-9]+-')
     if [[ "$rdep" != "" ]] ; then
@@ -71,12 +73,23 @@ cat >> generate-workflow-deps.out << EOF
     if: \${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - name: Verify tests
+      - name: Wait for tests to complete.
         run: |
-          ssh lumi \\
-            "bash -ex -c '\\
-              ls /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }} \\
-              '"
-        working-directory: \${{ github.workspace }}/RecipesDocker
+          while [ \$(ssh lumi 'bash -c "squeue --me -n lumi-container-test | wc -l"') -ne 1 ] ; do
+            echo -n "."
+            sleep 10
+          done
+          echo "Tests completed."
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 EOF
 
+for i in $allf ; do
+  tag=$(echo $i | sed 's/\./_/g')
+  cat >> generate-workflow-deps.out << EOF
+      - name: Verify $tag
+        continue-on-error: true
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$i/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+EOF
+done
