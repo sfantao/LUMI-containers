@@ -87,7 +87,7 @@ for i in $allf ; do
   tag=$(echo $i | sed 's/\./_/g')
   cat >> generate-workflow-deps.out << EOF
       - name: Verify $tag
-        continue-on-error: true
+        if: always()
         run: |
           ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$i/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
