@@ -30,6 +30,8 @@ cat \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.no-torch-rocm \
   ../common/Dockerfile.rccl-env \
+  ../common/Dockerfile.torch-extra-packages \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

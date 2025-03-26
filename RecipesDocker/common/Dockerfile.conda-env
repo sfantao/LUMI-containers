@@ -1,0 +1,12 @@
+ENV CONDA_DEFAULT_ENV=pytorch
+ENV CONDA_SHLVL=1
+ENV CONDA_EXE="/opt/miniconda3/bin/conda"
+ENV CONDA_PREFIX="/opt/miniconda3/envs/$CONDA_DEFAULT_ENV"
+ENV _CE_M=''
+ENV CONDA_PYTHON_EXE="/opt/miniconda3/bin/python"
+ENV _CE_CONDA=''
+ENV CONDA_PROMPT_MODIFIER="($CONDA_DEFAULT_ENV)"
+ENV PATH="/opt/miniconda3/envs/$CONDA_DEFAULT_ENV/bin:/opt/miniconda3/condabin:$PATH"
+
+# Disable the WITH_CONDA helper
+ENV WITH_CONDA=true

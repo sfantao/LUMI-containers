@@ -1,0 +1,34 @@
+ARG TORCHAO_VERSION=0.9.0+rocm6.2.4
+RUN $WITH_CONDA; set -eux ; \
+  pip3 install --pre torchao==$TORCHAO_VERSION --index-url https://download.pytorch.org/whl/
+  
+ARG TORCHTUNE_VERSION=v0.6.0
+RUN $WITH_CONDA; set -eux ; \
+  git clone -b $TORCHTUNE_VERSION --recursive https://github.com/pytorch/torchtune /opt/mybuild ; \
+  cd /opt/mybuild ; \
+  pip wheel --no-deps -e . -w /opt/wheels ; \
+  pip install /opt/wheels/torchtune-*.whl ; \
+  cd / ; rm -rf /opt/mybuild
+
+RUN $WITH_CONDA; set -eux ; \
+  CC=gcc-12 \
+  CXX=g++-12 \
+  pip install \
+    beautifulsoup4==4.13.3 \
+    lightning==2.5.1 \
+    evaluate==0.4.3 \
+    fasttext==0.9.3 \
+    scikit-learn==1.6.1 \
+    scikit-image==0.25.2 \
+    gensim==4.3.3 \
+    gradio==5.23.1 \
+    lighteval==0.8.1 \
+    numba==0.61.0 \
+    pyrsmi==0.2.0 \
+    pysqlite3==0.5.4 \
+    sentence-transformers==3.4.1 \
+    tensorboardX==2.6.2.2 \
+    torch-tb-profiler==0.4.3 \
+    tornado==6.4.2 \
+    tqdm-multiprocess==0.0.11 \
+    zstandard==0.23.0
