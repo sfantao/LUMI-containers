@@ -31,6 +31,7 @@ cat \
   ../common/Dockerfile.no-torch-rocm \
   ../common/Dockerfile.rccl-env \
   ../common/Dockerfile.torch-extra-packages \
+  ../common/Dockerfile.conda-env-pytorch \
   ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 

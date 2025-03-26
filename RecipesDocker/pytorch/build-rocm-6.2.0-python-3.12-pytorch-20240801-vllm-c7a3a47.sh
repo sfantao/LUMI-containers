@@ -18,6 +18,8 @@ cat \
   $DOCKERFILE \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.rccl-env \
+  ../common/Dockerfile.conda-env-pytorch \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

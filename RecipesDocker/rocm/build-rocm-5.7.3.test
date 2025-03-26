@@ -9,7 +9,6 @@ rm -rf run.sh
 cat > run.sh << EOF
 #!/bin/bash -e
 cd /myrun
-\$WITH_CONDA
 set -x
 
 # -b minbytes

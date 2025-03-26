@@ -2,7 +2,6 @@
 
 cat > run.sh << EOF
 #!/bin/bash -e
-\$WITH_CONDA
 
 set -x
 

@@ -17,6 +17,8 @@ cat \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.rccl-env \
+  ../common/Dockerfile.conda-env-tensorflow \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

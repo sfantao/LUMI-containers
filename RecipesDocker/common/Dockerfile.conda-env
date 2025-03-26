@@ -1,4 +1,3 @@
-ENV CONDA_DEFAULT_ENV=pytorch
 ENV CONDA_SHLVL=1
 ENV CONDA_EXE="/opt/miniconda3/bin/conda"
 ENV CONDA_PREFIX="/opt/miniconda3/envs/$CONDA_DEFAULT_ENV"

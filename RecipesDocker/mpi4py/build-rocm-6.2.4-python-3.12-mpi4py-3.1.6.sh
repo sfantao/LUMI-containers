@@ -13,6 +13,8 @@ cat \
   ../common/Dockerfile.cupy \
   ../common/Dockerfile.mpi4py \
   ../common/Dockerfile.osu \
+  ../common/Dockerfile.conda-env-mpi4py \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

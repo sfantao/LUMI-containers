@@ -16,6 +16,8 @@ cat \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.jax \
+  ../common/Dockerfile.conda-env-alphafold \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \

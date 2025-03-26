@@ -18,6 +18,8 @@ cat \
   ../common/Dockerfile.jax-from-source \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.rccl-env \
+  ../common/Dockerfile.conda-env-jax \
+  ../common/Dockerfile.conda-env \
   > $DOCKERFILE_TMP
 
 $DOCKERBUILD \
