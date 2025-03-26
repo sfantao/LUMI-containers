@@ -157,12 +157,12 @@ RUN $WITH_CONDA; set -eux ; \
     seaborn==0.13.2
 
 # 
-# Bits and bytes - tested with e4fe8b5
+# Bits and bytes - tested with 35266ea (was e4fe8b5)
 #
 RUN $WITH_CONDA; set -eux ; \ 
   git clone https://github.com/ROCm/bitsandbytes /opt/mybuild ; \
   cd /opt/mybuild ; \
-  git checkout -b mydev e4fe8b5 ; \
+  git checkout -b mydev 35266ea ; \
   pip install -r requirements-dev.txt ; \
   cmake -DCOMPUTE_BACKEND=hip -DBNB_ROCM_ARCH="gfx90a" -S . ; \
   nice make -j ; \

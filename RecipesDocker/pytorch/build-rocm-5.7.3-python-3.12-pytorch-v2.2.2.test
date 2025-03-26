@@ -94,8 +94,6 @@ if rank == 0:
   print("Done!")
 EOF
 
-sleep 5
-
 rm -rf run.sh 
 cat > run.sh << EOF
 #!/bin/bash -e
@@ -105,7 +103,7 @@ cd /myrun
 set -x
 
 ROCM_MAJOR_RELEASE=\$(echo \$ROCM_RELEASE | cut -d. -f1)
-ROCM_MINOR_RELEASE=\$(echo \$ROCM_RELEASE | cut -d. -f1)
+ROCM_MINOR_RELEASE=\$(echo \$ROCM_RELEASE | cut -d. -f2)
 
 if [ \$ROCM_MAJOR_RELEASE -lt 6 ] ; then
   exit 0
@@ -126,7 +124,6 @@ $SCMD \
     -B $(pwd):/myrun \
     $1 \
     /myrun/run.sh |& tee res.log
-
 
 #
 # Run MNIST test
@@ -319,7 +316,7 @@ chmod +x run.sh
 
 $SCMD \
     -B $(pwd):/myrun \
-    -B /pfs/lustrep2/scratch/project_462000125/samantao/data-sets/mnist:/datasets \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/mnist:/datasets \
     $1 \
     /myrun/run.sh |& tee res.log
 
@@ -498,7 +495,7 @@ chmod +x run.sh
 
 $SCMD \
     -B $(pwd):/myrun \
-    -B /pfs/lustrep2/scratch/project_462000125/samantao/data-sets/hf_home:/hf_home \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/hf_home:/hf_home \
     $1 \
     /myrun/run.sh |& tee res.log
 
@@ -529,8 +526,8 @@ chmod +x run.sh
 
 $SCMD \
     -B $(pwd):/myrun \
-    -B /pfs/lustrep2/scratch/project_462000125/samantao/data-sets/mnist:/datasets \
-    -B /pfs/lustrep2/scratch/project_462000125/samantao/data-sets/TransformerEngine/examples/pytorch/minGPT:/minGPT \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/mnist:/datasets \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/TransformerEngine/examples/pytorch/minGPT:/minGPT \
     $1 \
     /myrun/run.sh |& tee res.log
 
@@ -542,11 +539,9 @@ rm -rf run.sh
 cat > run.sh << EOF
 #!/bin/bash -e
 
-cd /myrun/megatron/examples/gpt3
+cd /megatron-code/examples/gpt3
 
 \$WITH_CONDA
-# source /myrun/newte/venv/bin/activate
-source /myrun/newte/venv-fa273/bin/activate
 
 set -x
 
@@ -638,86 +633,24 @@ EXTRA_ARGS=(
        --train-iters 5
 )
 
-# export TORCH_LOGS="+dynamo"
-# export TORCHDYNAMO_VERBOSE=1
-# export TORCH_DISTRIBUTED_DEBUG=INFO
-
-# export AMD_LOG_LEVEL=4
-# export NVTE_DEBUG=1
-# export NVTE_DEBUG_LEVEL=2
-
-export NCCL_DEBUG=INFO
-export NCCL_DEBUG_SUBSYS=INIT,COLL
-# export NCCL_DEBUG_SUBSYS=INIT
-# export RCCL_KERNEL_COLL_TRACE_ENABLE=1
-export NCCL_DEBUG_FILE=/tmp/$(whoami)-rccl-rank\$SLURM_PROCID.txt
-
-# export NCCL_DEBUG=INFO
-# export NCCL_DEBUG_SUBSYS=INIT
-
-# TORCH_NCCL_HIGH_PRIORITY=1 
-# GPU_MAX_HW_QUEUES=8
-
-# unset CXI_FORK_SAFE
-# unset CXI_FORK_SAFE_HP
-# unset FI_CXI_DISABLE_CQ_HUGETLB
-
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/libfabric-install-1.22.0/lib:\$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/aws-ofi-rccl-install:\$LD_LIBRARY_PATH
-
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/libfabric-install-master/lib:\$LD_LIBRARY_PATH
-# export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19/aws-ofi-rccl2-install:\$LD_LIBRARY_PATH
-
-export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/shs-libcxi-install/lib:\$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/libfabric-install-master/lib:\$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/aws-ofi-rccl2-install:\$LD_LIBRARY_PATH
-
-export LD_LIBRARY_PATH=/pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/rccl-2025-02-26-85eb1f1/lib:\$LD_LIBRARY_PATH
-
-# if [ \$SLURM_PROCID -eq 0 ] ; then
-#   ldd /pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-24/aws-ofi-rccl2-install/librccl-net.so
-# fi
-
-# exit 0
-
-export FI_LOG_LEVEL=Debug #Libfabric logging. May cause performance degredation
-export FI_CXI_LOG_LEVEL=debug
 export NCCL_NCHANNELS_PER_PEER=32
 
-python -u /myrun/megatron/pretrain_gpt.py \
+python -u /megatron-code/pretrain_gpt.py \
     \${GPT_MODEL_ARGS[@]} \
     \${TRAINING_ARGS[@]} \
     \${MODEL_PARALLEL_ARGS[@]} \
     \${DATA_ARGS[@]} \
     \${EVAL_AND_LOGGING_ARGS[@]} \
-    \${EXTRA_ARGS[@]} || true
+    \${EXTRA_ARGS[@]}
 
-mv \$NCCL_DEBUG_FILE /myrun/rccl-logs-megatron
 EOF
 chmod +x run.sh
-
-if [ ! -d megatron ] ; then
-    git clone -b rocm_dev https://github.com/ROCm/Megatron-LM megatron
-fi
-
-#sss=/pfs/lustrep2/scratch/project_462000125/samantao/tickets/megatron/official_megatron.sif
-sss=/pfs/lustrep3/scratch/project_462000394/containers/staging-area/lumi/lumi-pytorch-rocm-6.2.4-python-3.12-pytorch-v2.6.0-dockerhash-0fb1415058b3.sif
-#sss=$1
-
-rm -rf /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/pytorch/rccl-logs-megatron/*
-
-# rm -rf /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
-# mkdir /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
-# cd /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/remove-me
 
 MASTER_ADDR=$(scontrol show hostname "$SLURM_NODELIST" | head -n1) \
 $SCMD \
     -B /boot/config-5.14.21-150500.55.49_13.0.56-cray_shasta_c \
-    -B /pfs/lustrep3/scratch/project_462000394/containers \
-    -B /pfs/lustrep3/scratch/project_462000394/containers/staging-area/runtests/pytorch:/myrun \
-    -B /pfs/lustrep2/scratch/project_462000125/samantao/amd-data:/megatron-data \
-    -B /pfs/lustrep3/scratch/project_462000394/containers/for-turkunlp-team/deps-2025-02-19 \
-    $sss \
+    -B $(pwd):/myrun \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/gpt2:/megatron-data \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/megatron-fe353fd:/megatron-code \
+    $1 \
     /myrun/run.sh |& tee res.log
