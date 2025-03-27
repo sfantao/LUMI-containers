@@ -1178,7 +1178,7 @@ jobs:
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 
   Stop-Runner:
-    needs: Build-Container
+    needs: Verify
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: ubuntu-latest
     container:

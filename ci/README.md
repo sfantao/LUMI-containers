@@ -30,3 +30,6 @@ These are the steps the CI executes with some explanation:
 * Push images and tests to LUMI (run on Cpouta with remote commands to LUMI): this will make the docker images available on the LUMI registry and create the scripts to build the singularity images and issue the tests.
 * Run singularity builds and tests (run on Cpouta with remote commands to LUMI): builds up to 4 simulatenous singularity images and launches the tests as separate jobs. If the job succeeds the image is copied to a designated folder for tested image, otherwise the image is transferred to a designated folder for failed images. When the tests are issued by comming workflows, these designated folder are checked and the build is skipped if an image already exists.
 * Validate results (run on Cpouta with remote commands to LUMI): wait for tests to complete and assert that they completed successfully or not.
+* Remove the VM (run on Github own runners inside the Openstack container): this removes the VM.
+
+All secrets and access details are obtained from the Github Actions configurations meant to manage that.
