@@ -9,6 +9,7 @@ fi
 LUMI_TESTED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/tested-containers"
 LUMI_FAILED_CONTAINERS_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/failed-containers"
 LUMI_TEST_FOLDER="/pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/$LUMI_TIMESTAMP"
+LUMI_REGISTRY="uan03:5000"
 SINGULARITY_BUILD_MAX_TIME="1:00:00"
 
 Nodes=4
@@ -87,7 +88,7 @@ for i in $files ; do
     test_filename=${filename%.done}.test
     local_tag=$line
     remote_tag="127.0.0.1:5000/$local_tag"
-    lumi_tag="uan03:5000/$local_tag"
+    lumi_tag="$LUMI_REGISTRY/$local_tag"
 
     #
     # Remote names
