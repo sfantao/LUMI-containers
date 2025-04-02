@@ -10,8 +10,6 @@ TF_KERAS_VERSION='2.16.0'
 cat \
   ../common/Dockerfile.header \
   ../common/Dockerfile.rocm-6.2.3  \
-  ../common/Dockerfile.rccl \
-  ../common/Dockerfile.libfabric \
   ../common/Dockerfile.aws-ofi-rccl \
   ../common/Dockerfile.rccltest \
   ../common/Dockerfile.miniconda \
