@@ -1179,6 +1179,7 @@ jobs:
 
   Stop-Runner:
     needs: Verify
+    if: always()
     runs-on: ubuntu-latest
     container:
       image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
