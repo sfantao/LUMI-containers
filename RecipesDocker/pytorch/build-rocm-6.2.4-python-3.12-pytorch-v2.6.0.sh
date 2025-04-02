@@ -24,9 +24,6 @@ cat \
   ../common/Dockerfile.rccltest \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
-  ../common/Dockerfile.cupy \
-  ../common/Dockerfile.mpi4py \
-  ../common/Dockerfile.rccl \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.no-torch-rocm \
   ../common/Dockerfile.rccl-env \

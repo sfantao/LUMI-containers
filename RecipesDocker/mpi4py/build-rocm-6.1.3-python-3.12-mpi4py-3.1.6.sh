@@ -7,7 +7,7 @@ MPI4PY_VERSION='3.1.6'
 
 cat \
   ../common/Dockerfile.header \
-  ../common/Dockerfile.rocm-6.2.4  \
+  ../common/Dockerfile.rocm-6.1.3  \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
   ../common/Dockerfile.cupy \

@@ -16,7 +16,7 @@ all: alphafold mpi4py pytorch tensorflow rocm jax
 #
 alphafold: alphafold/build-rocm-6.2.4-python-3.10-alphafold-f251de6.done
 
-mpi4py: mpi4py/build-rocm-6.2.4-python-3.12-mpi4py-3.1.6.done
+mpi4py: mpi4py/build-rocm-6.1.3-python-3.12-mpi4py-3.1.6.done
 
 pytorch_deps := pytorch/build-rocm-5.7.3-python-3.12-pytorch-v2.2.2.done
 pytorch_deps += pytorch/build-rocm-6.0.3-python-3.12-pytorch-v2.3.1.done

@@ -20,8 +20,6 @@ cat \
   ../common/Dockerfile.rccltest \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
-  ../common/Dockerfile.cupy \
-  ../common/Dockerfile.mpi4py \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.rccl-env \
   ../common/Dockerfile.conda-env-pytorch \

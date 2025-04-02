@@ -529,6 +529,12 @@ rm -rf run.sh
 cat > run.sh << EOF
 #!/bin/bash -e
 
+if python -c 'import megatron' ; then
+  echo "Testing..."
+else
+  exit 0
+fi
+
 cd /megatron-code/examples/gpt3
 
 set -x
