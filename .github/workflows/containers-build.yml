@@ -531,22 +531,22 @@ jobs:
               sbatch < test.sbatch |& tee jobid.info \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  build-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
-    needs: build-rocm-build-rocm-6_2_4
+  build-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6:
+    needs: build-rocm-build-rocm-6_1_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
-      - run: ./lumi-containers-build.sh ./mpi4py/build-rocm-6.2.4-python-3.12-mpi4py-3.1.6.done 1
+      - run: ./lumi-containers-build.sh ./mpi4py/build-rocm-6.1.3-python-3.12-mpi4py-3.1.6.done 1
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  trf-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
-    needs: build-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6
+  trf-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6:
+    needs: build-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-trf
     steps:
-      - run: LUMI_TIMESTAMP="gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6" TARGET_FILE="./mpi4py/build-rocm-6.2.4-python-3.12-mpi4py-3.1.6.done" ./lumi-containers-transfer.sh
+      - run: LUMI_TIMESTAMP="gh-${{ github.run_id }}/mpi4py-build-rocm-6.1.3-python-3.12-mpi4py-3.1.6" TARGET_FILE="./mpi4py/build-rocm-6.1.3-python-3.12-mpi4py-3.1.6.done" ./lumi-containers-transfer.sh
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  test-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6:
-    needs: trf-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6
+  test-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6:
+    needs: trf-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-test
     steps:
@@ -554,14 +554,14 @@ jobs:
         run: |
           ssh lumi \
             "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6/runtests && \
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.1.3-python-3.12-mpi4py-3.1.6/runtests && \
               ./build-singularity-images.sh \
               '"
       - name: issue SIF image testing
         run: |
           ssh lumi \
             "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6/runtests && \
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.1.3-python-3.12-mpi4py-3.1.6/runtests && \
               sbatch < test.sbatch |& tee jobid.info \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
@@ -1055,7 +1055,7 @@ jobs:
       - test-rocm-build-rocm-5_7_3
       - test-rocm-build-rocm-asan-6_2_4
       - test-rocm-build-rocm-asan-6_1_3
-      - test-mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6
+      - test-mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6
       - test-tensorflow-build-rocm-6_2_3-python-3_10-tensorflow-2_16_2-horovod-0_28_1
       - test-alphafold-build-rocm-6_2_4-python-3_10-alphafold-f251de6
       - test-pytorch-build-rocm-6_1_3-python-3_12-pytorch-v2_4_1
@@ -1141,10 +1141,10 @@ jobs:
         run: |
           ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/rocm-build-rocm-asan-6.1.3/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-      - name: Verify mpi4py-build-rocm-6_2_4-python-3_12-mpi4py-3_1_6
+      - name: Verify mpi4py-build-rocm-6_1_3-python-3_12-mpi4py-3_1_6
         if: always()
         run: |
-          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.2.4-python-3.12-mpi4py-3.1.6/runtests/test.out'
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/mpi4py-build-rocm-6.1.3-python-3.12-mpi4py-3.1.6/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
       - name: Verify tensorflow-build-rocm-6_2_3-python-3_10-tensorflow-2_16_2-horovod-0_28_1
         if: always()
