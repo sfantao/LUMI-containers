@@ -46,7 +46,9 @@ import jax
 coordinator_address = os.getenv('MASTER_ADDRESS') + ':29999'
 process_id = int(os.getenv('SLURM_PROCID'))
 num_processes = int(os.getenv('SLURM_NPROCS'))
-local_device_ids = [int(os.getenv('SLURM_LOCALID'))]
+local_device_ids = [0]
+
+print("sfantao-->", process_id, num_processes, local_device_ids)
 
 jax.distributed.initialize(
   coordinator_address = coordinator_address,
@@ -83,12 +85,12 @@ set -x
   # Report affinity
   echo "Rank \$SLURM_PROCID --> \$(taskset -p \$\$)"
 
-  export MASTER_ADDRESS=$(scontrol show hostname "$SLURM_NODELIST" | head -n1)
-
-  python -u jax_test.py
+  ROCR_VISIBLE_DEVICES=\$SLURM_LOCALID \
+    python -u jax_test.py
 EOF
 chmod +x run.sh 
 
+export MASTER_ADDRESS=$(scontrol show hostname "$SLURM_NODELIST" | head -n1)
 $SCMD \
     -B $(pwd):/myrun \
     $1 \
