@@ -4,7 +4,7 @@ set -o pipefail
 PYTHON_VERSION='3.12'
 JAX_VERSION='0.5.1'
 XLA_VERSION='rocm-jaxlib-v0.5.1'
-JAXLIB_VERSION='rocm-jaxlib-v0.5.1'
+JAXLIB_VERSION='rocm-jaxlib-v0.5.1-rc'
 
 cat \
   ../common/Dockerfile.header \

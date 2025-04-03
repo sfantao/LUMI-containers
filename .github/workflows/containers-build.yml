@@ -8,94 +8,94 @@ concurrency:
   group: cpouta-single-workflow
   cancel-in-progress: true
 jobs:
-  OpenStack-Container-Check:
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: check modified files
-        id: check_files
-        run: |
-          set -e
-          set -o pipefail
-          if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
-            echo "::set-output name=run_job::true"
-          else
-            echo "::set-output name=run_job::false"
-          fi
-  OpenStack-Container:
-    needs: OpenStack-Container-Check
-    if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Build openstack image
-        run: |
-          docker pull $OPENSTACK_IMAGE_NAME || true
-          docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
-      - name: Push image
-        run: docker push $OPENSTACK_IMAGE_NAME
-  Start-Runner:
-    needs: OpenStack-Container
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: ubuntu-latest
-    permissions: write-all
-    container:
-      image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
-      env:
-        OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
-        OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
-        OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
-        OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
-        OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
-        OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
-        OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
-        OS_MY_FLAVOUR: "hpc.5.64core"
-        OS_MY_IMAGE: "b68c5c2c-f3e4-4a11-8784-d132927cc295"
-    steps:
-      - name: Remove old instance if exists
-        run: openstack server delete --wait production_containers_workflow || true
-      - name: Create instance
-        run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
-      - name: Assign server public IP
-        run: openstack server add floating ip production_containers_workflow ${{ secrets.CPOUTA_INSTANCE_IP }}
-      - name: Assign security group
-        run: |
-          set -e
-          set -o pipefail
-          openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
-      - name: Assign volume
-        run: openstack server add volume production_containers_workflow test_containers_workflow_vol
-# Find a good way to check if the runner is on; maybe use SSH with nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22
-      - name: Check runner is ready
-        run: |
-          sleep 15
-          # now=$(date +%s)
-          # timeout=$((now + 60))
-          # while [ $now -lt $timeout ] ; do
-          #   openstack server show production_containers_workflow
-          #   now=$(date +%s)
-          # done
+#   OpenStack-Container-Check:
+#     outputs:
+#       run_job: ${{ steps.check_files.outputs.run_job }}
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: 2
+#       - name: check modified files
+#         id: check_files
+#         run: |
+#           set -e
+#           set -o pipefail
+#           if git diff --name-only HEAD^ HEAD | grep 'ci/openstack/Dockerfile' ; then
+#             echo "::set-output name=run_job::true"
+#           else
+#             echo "::set-output name=run_job::false"
+#           fi
+#   OpenStack-Container:
+#     needs: OpenStack-Container-Check
+#     if: needs.OpenStack-Container-Check.outputs.run_job == 'true'
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
+#       packages: write
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Log in to registry
+#         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+#       - name: Build openstack image
+#         run: |
+#           docker pull $OPENSTACK_IMAGE_NAME || true
+#           docker build ./ci/openstack --tag $OPENSTACK_IMAGE_NAME
+#       - name: Push image
+#         run: docker push $OPENSTACK_IMAGE_NAME
+#   Start-Runner:
+#     needs: OpenStack-Container
+#     if: ${{ ! failure() && ! cancelled() }}
+#     runs-on: ubuntu-latest
+#     permissions: write-all
+#     container:
+#       image: "ghcr.io/${{ github.repository_owner }}/openstack:latest"
+#       credentials:
+#         username: ${{ github.actor }}
+#         password: ${{ secrets.github_token }}
+#       env:
+#         OS_AUTH_TYPE: "${{ vars.OS_AUTH_TYPE }}"
+#         OS_AUTH_URL: "${{ vars.OS_AUTH_URL }}"
+#         OS_IDENTITY_API_VERSION: "${{ vars.OS_IDENTITY_API_VERSION }}"
+#         OS_REGION_NAME: "${{ vars.OS_REGION_NAME }}"
+#         OS_INTERFACE: "${{ vars.OS_INTERFACE }}"
+#         OS_APPLICATION_CREDENTIAL_ID: "${{ secrets.OS_APPLICATION_CREDENTIAL_ID }}"
+#         OS_APPLICATION_CREDENTIAL_SECRET: "${{ secrets.OS_APPLICATION_CREDENTIAL_SECRET }}"
+#         OS_MY_FLAVOUR: "hpc.5.64core"
+#         OS_MY_IMAGE: "b68c5c2c-f3e4-4a11-8784-d132927cc295"
+#     steps:
+#       - name: Remove old instance if exists
+#         run: openstack server delete --wait production_containers_workflow || true
+#       - name: Create instance
+#         run: openstack server create --wait --flavor $OS_MY_FLAVOUR --image $OS_MY_IMAGE --key-name containers_workflow production_containers_workflow
+#       - name: Assign server public IP
+#         run: openstack server add floating ip production_containers_workflow ${{ secrets.CPOUTA_INSTANCE_IP }}
+#       - name: Assign security group
+#         run: |
+#           set -e
+#           set -o pipefail
+#           openstack server add security group production_containers_workflow test_containers_workflow_sec_group 
+#       - name: Assign volume
+#         run: openstack server add volume production_containers_workflow test_containers_workflow_vol
+# # Find a good way to check if the runner is on; maybe use SSH with nc -z ${{ secrets.CPOUTA_INSTANCE_IP }} 22
+#       - name: Check runner is ready
+#         run: |
+#           sleep 15
+#           # now=$(date +%s)
+#           # timeout=$((now + 60))
+#           # while [ $now -lt $timeout ] ; do
+#           #   openstack server show production_containers_workflow
+#           #   now=$(date +%s)
+#           # done
 
   Prepare-Build-Containers:
-    needs: Start-Runner
+    # needs: Start-Runner
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta-main
     steps:
-      - name: Prepare VM for docker builds
-        run: sudo prepare-vm
+      # - name: Prepare VM for docker builds
+      #   run: sudo prepare-vm
       - name: List Docker images
         run: docker images
       - name: Check out repository code
@@ -976,6 +976,40 @@ jobs:
               sbatch < test.sbatch |& tee jobid.info \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  build-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0:
+    needs: build-rocm-build-rocm-6_2_4
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta
+    steps:
+      - run: ./lumi-containers-build.sh ./jax/build-rocm-6.2.4-python-3.12-jax-community-0.5.0.done 1
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  trf-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0:
+    needs: build-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-trf
+    steps:
+      - run: LUMI_TIMESTAMP="gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.0" TARGET_FILE="./jax/build-rocm-6.2.4-python-3.12-jax-community-0.5.0.done" ./lumi-containers-transfer.sh
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  test-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0:
+    needs: trf-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-test
+    steps:
+      - name: build SIF image
+        run: |
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.0/runtests && \
+              ./build-singularity-images.sh \
+              '"
+      - name: issue SIF image testing
+        run: |
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.0/runtests && \
+              sbatch < test.sbatch |& tee jobid.info \
+              '"
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-jax-build-rocm-6_2_4-python-3_12-jax-0_5_1:
     needs: build-rocm-build-rocm-6_2_4
     if: ${{ ! failure() && ! cancelled() }}
@@ -1078,40 +1112,6 @@ jobs:
               sbatch < test.sbatch |& tee jobid.info \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  build-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3:
-    needs: build-rocm-build-rocm-6_2_4
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: cpouta
-    steps:
-      - run: ./lumi-containers-build.sh ./jax/build-rocm-6.2.4-python-3.12-jax-community-0.5.3.done 1
-        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  trf-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3:
-    needs: build-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: cpouta-trf
-    steps:
-      - run: LUMI_TIMESTAMP="gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.3" TARGET_FILE="./jax/build-rocm-6.2.4-python-3.12-jax-community-0.5.3.done" ./lumi-containers-transfer.sh
-        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-  test-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3:
-    needs: trf-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3
-    if: ${{ ! failure() && ! cancelled() }}
-    runs-on: cpouta-test
-    steps:
-      - name: build SIF image
-        run: |
-          ssh lumi \
-            "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.3/runtests && \
-              ./build-singularity-images.sh \
-              '"
-      - name: issue SIF image testing
-        run: |
-          ssh lumi \
-            "bash -ex -c '\
-              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.3/runtests && \
-              sbatch < test.sbatch |& tee jobid.info \
-              '"
-        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   Verify:
     needs:
       - test-rocm-build-rocm-asan-6_2_3
@@ -1139,10 +1139,10 @@ jobs:
       - test-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_6_0
       - test-pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0
       - test-jax-build-rocm-6_2_4-python-3_12-jax-0_5_0
+      - test-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0
       - test-jax-build-rocm-6_2_4-python-3_12-jax-0_5_1
       - test-jax-build-rocm-6_2_4-python-3_12-jax-0_4_35
       - test-jax-build-rocm-6_2_0-python-3_12-jax-0_4_28
-      - test-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3
     if: ${{ ! failure() && ! cancelled() }}
     runs-on: cpouta
     steps:
@@ -1279,6 +1279,11 @@ jobs:
         run: |
           ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-0.5.0/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0
+        if: always()
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.0/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
       - name: Verify jax-build-rocm-6_2_4-python-3_12-jax-0_5_1
         if: always()
         run: |
@@ -1293,11 +1298,6 @@ jobs:
         if: always()
         run: |
           ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.0-python-3.12-jax-0.4.28/runtests/test.out'
-        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
-      - name: Verify jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_3
-        if: always()
-        run: |
-          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/jax-build-rocm-6.2.4-python-3.12-jax-community-0.5.3/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 
   #####################################################################################################

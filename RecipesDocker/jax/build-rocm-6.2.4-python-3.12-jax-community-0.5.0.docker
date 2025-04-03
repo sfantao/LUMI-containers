@@ -1,0 +1,20 @@
+#
+# Install conda environment
+# 
+ARG PYTHON_VERSION
+RUN $WITH_CONDA; set -eux ; \
+  conda create -n jax python=$PYTHON_VERSION
+
+ENV WITH_CONDA "source /opt/miniconda3/bin/activate jax"
+
+ARG JAX_VERSION
+
+RUN --mount=type=bind,from=rocm/jax-community:rocm6.2.4-jax0.5.0-py3.12.8@sha256:48bd8a6307948e65c02599d1d4db15e4094854097b664c01d4cd756e48ff12c3,source=/rocm_jax_wheels,dst=/h \
+  $WITH_CONDA; set -eux ; \
+  python3 -m pip install /h/jaxlib-*.whl ; \
+  python3 -m pip install /h/jax_rocm60_*.whl ; \
+  python3 -m pip install /h/jax-*.whl
+
+ENV JAX_PLATFORMS "rocm,cpu"
+
+ENV LLVM_PATH=$ROCM_PATH/llvm

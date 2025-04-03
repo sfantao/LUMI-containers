@@ -7,7 +7,6 @@ RUN $WITH_CONDA; set -eux ; \
 
 ENV WITH_CONDA "source /opt/miniconda3/bin/activate jax"
 
-
 #
 # Set the compiler for the builds to be GCC 10.
 #
@@ -25,7 +24,7 @@ ENV CXX g++
 RUN set -eux; \
   zypper -n refresh ; \
   zypper --no-gpg-checks -n install -y --force-resolution \
-    xz binutils-gold bazel ; \
+    xz binutils-gold bazel patchelf ; \
   zypper clean
 
 RUN $WITH_CONDA; set -eux ; \
@@ -51,8 +50,7 @@ RUN $WITH_CONDA; set -eux ; \
   \
   cd /opt/jax ; \
   export TEST_TMPDIR=/opt/.bazel ; \
-  python build/build.py \
-    --enable_rocm \
+  python build/build.py build \
     --wheels=jaxlib,jax-rocm-plugin,jax-rocm-pjrt \
     --rocm_version=62 \
     --rocm_path=$ROCM_PATH \
