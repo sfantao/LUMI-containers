@@ -52,7 +52,7 @@ RUN $WITH_CONDA; set -eux ; \
   export TEST_TMPDIR=/opt/.bazel ; \
   python build/build.py build \
     --wheels=jaxlib,jax-rocm-plugin,jax-rocm-pjrt \
-    --rocm_version=62 \
+    --rocm_version=60 \
     --rocm_path=$ROCM_PATH \
     --rocm_amdgpu_targets=gfx90a \
     --bazel_options=--override_repository=xla=/opt/xla \
