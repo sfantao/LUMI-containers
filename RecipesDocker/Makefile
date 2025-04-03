@@ -48,6 +48,8 @@ rocm: $(rocm_deps)
 jax_deps := jax/build-rocm-6.2.0-python-3.12-jax-0.4.28.done
 jax_deps += jax/build-rocm-6.2.4-python-3.12-jax-0.4.35.done
 jax_deps += jax/build-rocm-6.2.4-python-3.12-jax-0.5.0.done
+jax_deps += jax/build-rocm-6.2.4-python-3.12-jax-0.5.1.done
+jax_deps += jax/build-rocm-6.2.4-python-3.12-jax-community-0.5.3.done
 jax: $(jax_deps)
 
 #

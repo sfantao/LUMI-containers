@@ -95,3 +95,4 @@ $SCMD \
     -B $(pwd):/myrun \
     $1 \
     /myrun/run.sh |& tee res.log
+    
