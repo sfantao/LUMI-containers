@@ -15,7 +15,6 @@ cat \
   ../common/Dockerfile.rccltest \
   ../common/Dockerfile.miniconda \
   $DOCKERFILE \
-  ../common/Dockerfile.jax-from-source \
   ../common/Dockerfile.no-torch-libstdc++ \
   ../common/Dockerfile.rccl-env \
   ../common/Dockerfile.conda-env-jax \
