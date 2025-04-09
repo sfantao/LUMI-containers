@@ -11,7 +11,7 @@ TORCHAUDIO_VERSION='2.6.0+rocm6.2.4'
 VLLM_VERSION='v0.7.2+rocm'
 CUPY_VERSION='13.2.0'
 MPI4PY_VERSION='3.1.6'
-RCCL_VERSION='612add2'
+RCCL_VERSION='85eb1f1'
 TRITON_VERSION='35c6c7c62' # Check .ci/docker/ci_commit_pins/triton.txt in Pytorch
 MEGATRON_VERSION='fe353fd'
 

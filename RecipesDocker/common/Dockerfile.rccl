@@ -1,4 +1,4 @@
-ARG RCCL_VERSION=612add2
+ARG RCCL_VERSION=85eb1f1
 
 RUN $WITH_CONDA ; set -eux ; \
   rm -rf /opt/mybuild ; \
