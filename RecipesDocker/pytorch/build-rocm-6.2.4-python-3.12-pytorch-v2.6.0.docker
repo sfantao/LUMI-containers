@@ -37,11 +37,14 @@ RUN $WITH_CONDA; set -eux ; \
 
 ARG APEX_VERSION
 RUN $WITH_CONDA; set -eux ; \
-  git clone -b $APEX_VERSION --recursive https://github.com/rocm/apex /opt/mybuild ; \
+  git clone --recursive https://github.com/rocm/apex /opt/mybuild ; \
   cd /opt/mybuild ; \
+  git checkout -b mydev $APEX_VERSION ; \
+  git submodule sync ; \
+  git submodule update --init --recursive --jobs 0 ; \
   CC=gcc-12, CXX=g++-12 nice python setup.py bdist_wheel --cpp_ext --cuda_ext ; \
   cp -rf dist/* /opt/wheels ; \
-  rm -rf /opt/mybuild 
+  rm -rf /opt/mybuild
   
 RUN $WITH_CONDA; set -eux ; \
   pip install /opt/wheels/apex-*.whl
