@@ -908,6 +908,40 @@ jobs:
               sbatch < test.sbatch |& tee jobid.info \
               '"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  build-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0:
+    needs: build-rocm-build-rocm-6_2_4
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta
+    steps:
+      - run: ./lumi-containers-build.sh ./pytorch/build-rocm-6.2.4-python-3.12-pytorch-v2.7.0.done 1
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  trf-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0:
+    needs: build-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-trf
+    steps:
+      - run: LUMI_TIMESTAMP="gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.7.0" TARGET_FILE="./pytorch/build-rocm-6.2.4-python-3.12-pytorch-v2.7.0.done" ./lumi-containers-transfer.sh
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+  test-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0:
+    needs: trf-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0
+    if: ${{ ! failure() && ! cancelled() }}
+    runs-on: cpouta-test
+    steps:
+      - name: build SIF image
+        run: |
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.7.0/runtests && \
+              ./build-singularity-images.sh \
+              '"
+      - name: issue SIF image testing
+        run: |
+          ssh lumi \
+            "bash -ex -c '\
+              cd /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.7.0/runtests && \
+              sbatch < test.sbatch |& tee jobid.info \
+              '"
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
   build-pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0:
     needs: build-rocm-build-rocm-6_2_0
     if: ${{ ! failure() && ! cancelled() }}
@@ -1137,6 +1171,7 @@ jobs:
       - test-pytorch-build-rocm-6_2_1-python-3_12-pytorch-20240918-vllm-4075b35
       - test-pytorch-build-rocm-5_7_3-python-3_12-pytorch-v2_2_2
       - test-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_6_0
+      - test-pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0
       - test-pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0
       - test-jax-build-rocm-6_2_4-python-3_12-jax-0_5_0
       - test-jax-build-rocm-6_2_4-python-3_12-jax-community-0_5_0
@@ -1268,6 +1303,11 @@ jobs:
         if: always()
         run: |
           ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.6.0/runtests/test.out'
+        working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
+      - name: Verify pytorch-build-rocm-6_2_4-python-3_12-pytorch-v2_7_0
+        if: always()
+        run: |
+          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-${{ github.run_id }}/pytorch-build-rocm-6.2.4-python-3.12-pytorch-v2.7.0/runtests/test.out'
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
       - name: Verify pytorch-build-rocm-6_2_0-python-3_10-pytorch-v2_3_0
         if: always()
