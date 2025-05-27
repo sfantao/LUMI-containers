@@ -89,7 +89,7 @@ for i in $allf ; do
       - name: Verify $tag
         if: always()
         run: |
-          ssh lumi 'grep "Test success!!! -->" /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$i/runtests/test.out'
+          ssh lumi "grep 'Test success!!! -->' /pfs/lustrep4/scratch/project_462000475/containers-ci/staging-area/gh-\${{ github.run_id }}/$i/runtests/test.out"
         working-directory: /home/work/actions-runner-work/LUMI-containers/LUMI-containers/RecipesDocker
 EOF
 done
