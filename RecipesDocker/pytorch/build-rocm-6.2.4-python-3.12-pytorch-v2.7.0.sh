@@ -19,6 +19,7 @@ RCCL_VERSION='85eb1f1'
 TRITON_VERSION='96316ce' # Check .ci/docker/ci_commit_pins/triton.txt in Pytorch
 TE_VERSION='e7a7f6d'
 TE_VERSION='260a577'
+TE_VERSION='fb82947'
 MEGATRON_VERSION='10b7bc9'
 MEGATRON_VERSION='f612bdf'
  
