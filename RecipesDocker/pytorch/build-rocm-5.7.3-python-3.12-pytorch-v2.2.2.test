@@ -406,26 +406,30 @@ $SCMD \
 cat > vllm_testcase.py << EOF
 from vllm import LLM, SamplingParams
 
-# Sample prompts.
-prompts = [
-    "Hello, my name is",
-    "The president of the United States is",
-    "The capital of France is",
-    "The future of AI is",
-]
-# Create a sampling params object.
-sampling_params = SamplingParams(temperature=0.8, top_p=0.95)
+def work():
+  # Sample prompts.
+  prompts = [
+      "Hello, my name is",
+      "The president of the United States is",
+      "The capital of France is",
+      "The future of AI is",
+  ]
+  # Create a sampling params object.
+  sampling_params = SamplingParams(temperature=0.8, top_p=0.95)
 
-# Create an LLM.
-llm = LLM(model="facebook/opt-125m", download_dir="/myrun/vllm-download-dir")
-# Generate texts from the prompts. The output is a list of RequestOutput objects
-# that contain the prompt, generated text, and other information.
-outputs = llm.generate(prompts, sampling_params)
-# Print the outputs.
-for output in outputs:
-    prompt = output.prompt
-    generated_text = output.outputs[0].text
-    print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")
+  # Create an LLM.
+  llm = LLM(model="facebook/opt-125m", download_dir="/myrun/vllm-download-dir")
+  # Generate texts from the prompts. The output is a list of RequestOutput objects
+  # that contain the prompt, generated text, and other information.
+  outputs = llm.generate(prompts, sampling_params)
+  # Print the outputs.
+  for output in outputs:
+      prompt = output.prompt
+      generated_text = output.outputs[0].text
+      print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")
+
+if __name__ == '__main__':
+  work()
     
 EOF
 
@@ -434,14 +438,30 @@ cat > run.sh << EOF
 #!/bin/bash -e
 cd /myrun
 set -x
+
+  export HF_HOME=/hf_home
+
+  export VLLM_CACHE_ROOT=/tmp/my-vllm-cache-\$SLURM_LOCALID
+  mkdir -p \$VLLM_CACHE_ROOT
+
+  export JIT_WORKSPACE_DIR=/tmp/my-aiter-jit-workspace-\$SLURM_LOCALID/private_aiter/jit
+  rm -rf \$JIT_WORKSPACE_DIR
+  mkdir -p \$JIT_WORKSPACE_DIR/build
+
+  export PYTHONPATH=/tmp/my-aiter-jit-workspace-\$SLURM_LOCALID
+  export GPU_ARCHS=gfx90a
+  
   # Disable xformers to make sure they don't interfere with flash attention testing.
   if python -c 'import vllm ; print(vllm.__version__)' ; then
+    CC=clang \
+    CXX=clang++ \
     HIP_VISIBLE_DEVICES=\$SLURM_LOCALID python -u vllm_testcase.py
   fi
 EOF
 chmod +x run.sh
 
 $SCMD \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/hf_home:/hf_home \
     -B $(pwd):/myrun \
     $1 \
     /myrun/run.sh |& tee res.log
@@ -501,14 +521,14 @@ cat > run.sh << EOF
 set -x
 
   export HF_HOME=/hf_home
-  
+
   if python -c 'import transformer_engine ; print(transformer_engine.__version__)' ; then
 
-    # cd /myrun
-    # HIP_VISIBLE_DEVICES=\$SLURM_LOCALID python mnist-te.py --use-te  --use-amp --epochs 3
+    cd /mnist
+    HIP_VISIBLE_DEVICES=\$SLURM_LOCALID python mnist-te.py --use-te  --use-amp --epochs 3
 
-    cd /minGPT
-    HIP_VISIBLE_DEVICES=\$SLURM_LOCALID python -u gptSort.py --use-te  --use-amp --miters 320
+    #cd /minGPT
+    #HIP_VISIBLE_DEVICES=\$SLURM_LOCALID python -u gptSort.py --use-te  --use-amp --miters 320
 
   fi
 EOF
@@ -517,6 +537,7 @@ chmod +x run.sh
 $SCMD \
     -B $(pwd):/myrun \
     -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/mnist:/datasets \
+    -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/TransformerEngine/examples/pytorch/mnist:/mnist \
     -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/TransformerEngine/examples/pytorch/minGPT:/minGPT \
     $1 \
     /myrun/run.sh |& tee res.log
@@ -534,6 +555,13 @@ if python -c 'import megatron' ; then
 else
   exit 0
 fi
+
+# For AITER:
+export JIT_WORKSPACE_DIR=/tmp/my-aiter-jit-workspace-\$SLURM_LOCALID/private_aiter/jit
+rm -rf \$JIT_WORKSPACE_DIR
+mkdir -p \$JIT_WORKSPACE_DIR/build
+export PYTHONPATH=/tmp/my-aiter-jit-workspace-\$SLURM_LOCALID
+export GPU_ARCHS=gfx90a
 
 cd /megatron-code/examples/gpt3
 
@@ -604,7 +632,7 @@ EVAL_AND_LOGGING_ARGS=(
     --log-progress
     --save-interval 10000 
     --eval-interval 1000 
-    --eval-iters 10
+    --eval-iters 3
     --tensorboard-dir \$TENSORBOARD_LOGS_PATH 
 )
 
@@ -627,7 +655,7 @@ EXTRA_ARGS=(
        --train-iters 5
 )
 
-export NCCL_NCHANNELS_PER_PEER=32
+export NCCL_NCHANNELS_PER_PEER=4
 
 python -u /megatron-code/pretrain_gpt.py \
     \${GPT_MODEL_ARGS[@]} \
@@ -639,6 +667,9 @@ python -u /megatron-code/pretrain_gpt.py \
 
 EOF
 chmod +x run.sh
+
+#     -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/megatron-fe353fd:/megatron-code 
+#     -B /pfs/lustrep4/scratch/project_462000475/containers-ci/data-sets/megatron-856c36d:/megatron-code
 
 MASTER_ADDR=$(scontrol show hostname "$SLURM_NODELIST" | head -n1) \
 $SCMD \

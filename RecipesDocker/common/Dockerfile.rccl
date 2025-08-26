@@ -1,6 +1,9 @@
 ARG RCCL_VERSION=85eb1f1
 
 RUN $WITH_CONDA ; set -eux ; \
+  pip install cmake==3.28.4
+
+RUN $WITH_CONDA ; set -eux ; \
   rm -rf /opt/mybuild ; \
   git clone https://github.com/rocm/rccl /opt/mybuild ; \
   cd /opt/mybuild ; \

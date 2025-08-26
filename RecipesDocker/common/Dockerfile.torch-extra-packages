@@ -20,10 +20,8 @@ RUN $WITH_CONDA; set -eux ; \
     fasttext==0.9.3 \
     scikit-learn==1.6.1 \
     scikit-image==0.25.2 \
-    gensim==4.3.3 \
     gradio==5.23.1 \
-    lighteval==0.8.1 \
-    numba==0.61.0 \
+    numba==0.61.2 \
     pyrsmi==0.2.0 \
     pysqlite3==0.5.4 \
     sentence-transformers==3.4.1 \
@@ -32,3 +30,36 @@ RUN $WITH_CONDA; set -eux ; \
     tornado==6.4.2 \
     tqdm-multiprocess==0.0.11 \
     zstandard==0.23.0
+
+RUN $WITH_CONDA; set -eux ; \
+  CC=gcc-12 \
+  CXX=g++-12 \
+  pip install omegaconf==2.4.0.dev3
+
+RUN $WITH_CONDA; set -eux ; \
+  git clone https://github.com/huggingface/lighteval /opt/mybuild ; \
+  cd /opt/mybuild ; \
+  CC=gcc-12 \
+  CXX=g++-12 \
+  pip wheel --no-deps -e . -w /opt/wheels ; \
+  cd / ; rm -rf /opt/mybuild
+
+RUN $WITH_CONDA; set -eux ; \
+  CC=gcc-12 \
+  CXX=g++-12 \
+  pip install /opt/wheels/lighteval*.whl ; true
+
+# Gensim will require https://github.com/piskvorky/gensim/pull/3615 being merged
+# Without that it demotes numpy.
+# RUN $WITH_CONDA; set -eux ; \
+#   git clone https://github.com/piskvorky/gensim /opt/mybuild ; \
+#   cd /opt/mybuild ; \
+#   CC=gcc-12 \
+#   CXX=g++-12 \
+#   pip wheel --no-deps -e . -w /opt/wheels ; \
+#   cd / ; rm -rf /opt/mybuild
+
+# RUN $WITH_CONDA; set -eux ; \
+#   CC=gcc-12 \
+#   CXX=g++-12 \
+#   pip install /opt/wheels/gensim*.whl
