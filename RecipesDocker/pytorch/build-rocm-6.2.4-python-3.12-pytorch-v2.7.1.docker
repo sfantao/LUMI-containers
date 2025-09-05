@@ -390,7 +390,7 @@ RUN $WITH_CONDA; set -eux ; \
   git checkout -b mydev $AITER_VERSION ; \
   git submodule sync ; \
   git submodule update --init --recursive --jobs 0 ; \
-  sed -i 's#{__package__}.{md_name}#private_{__package__}.{md_name}#g' aiter/jit/core.py ; \
+#  sed -i 's#{__package__}.{md_name}#private_{__package__}.{md_name}#g' aiter/jit/core.py ; \
   CC=clang \
   CXX=clang++ \
     python3 setup.py bdist_wheel --dist-dir=/opt/wheels ; \

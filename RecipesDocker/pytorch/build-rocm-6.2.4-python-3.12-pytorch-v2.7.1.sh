@@ -18,6 +18,7 @@ TRITON_VERSION='96316ce' # Check .ci/docker/ci_commit_pins/triton.txt in Pytorch
 TE_VERSION='e7a7f6d'
 MEGATRON_VERSION='856c36d'
 AITER_VERSION='f6a5384'
+AITER_VERSION='e95fb1a'
  
 cat \
   ../common/Dockerfile.header \
